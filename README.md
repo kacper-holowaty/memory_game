@@ -1,2 +1,2 @@
-# Gra Memory (Protokoły sieci Web)
+# Gra Memory - projekt (Protokoły sieci Web)
 Kacper Hołowaty
