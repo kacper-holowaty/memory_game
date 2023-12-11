@@ -1,12 +1,38 @@
-import TestKomponenent from "../components/TestKomponenent"
+import React, {useEffect, useState} from "react"
+import axios from 'axios';
+import EkranStartowy from "./components/EkranStartowy";
 
+function App() {
 
-export default function App() {
-  console.log("czy to działa?");
+  // const [backendData, setBackendData] = useState({ users: [] });
+
+  // const getData = async () => {
+  //   try {
+  //     const res = await axios.get("/api");
+  //     setBackendData(res.data);
+  //   } catch (error) {
+  //     console.error('Błąd pobierania danych:', error);
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   getData();
+  // }, []);
+
   return (
     <>
-      <h1>Dobra</h1>
-      <TestKomponenent />
+      <EkranStartowy />
+      {/* <div>
+        {backendData.users.length === 0 ? (
+          <p>Loading...</p>
+        ) : (
+          backendData.users.map((user, i) => (
+            <p key={i}>{user}</p>
+          ))
+        )}
+      </div> */}
     </>
   );
 }
+export default App;
+

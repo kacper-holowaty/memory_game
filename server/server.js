@@ -2,16 +2,19 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const cors = require('cors');
-const port = 3000;
+const port = 5000;
 
 app.use(cors());
-app.use(express.json());
+// app.use(express.json());
 // app.use(express.static('public'));
-// app.use('/src', express.static('src'));
-app.use(express.static(path.join(__dirname, '../client/public')));
+// app.use(express.static(path.join(__dirname, 'images')));
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/public', 'index.html'));
+app.get('/board', (req, res) => {
+  const { size } = req.query; // Pobierz rozmiar planszy z parametru zapytania
+  console.log(size);
+  const dane_tablica = Array(size*size).fill("Remiza");
+
+  res.json(dane_tablica);
 });
 
 app.listen(port, () => {
