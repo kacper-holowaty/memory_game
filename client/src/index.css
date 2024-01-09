@@ -1,0 +1,48 @@
+.board-window {
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+  /* height: 80vh; */
+  margin: 0;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 120px);
+  gap: 10px;
+}
+
+/* .card {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  font-size: 4rem;
+} */
+.card {
+  position: relative; /* Dodane dla lepszego pozycjonowania */
+}
+
+.front-card,
+.back-card {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  font-size: 4rem;
+  border-radius: 5px;
+}
+
+.front-card.hidden {
+  display: none;
+}
+
+.back-card.hidden {
+  display: none;
+}
+/* .card:nth-child(5) { */
+/* visibility: hidden; // albo opacity: 0 */
+/* background-color: aquamarine; */
+/* } */

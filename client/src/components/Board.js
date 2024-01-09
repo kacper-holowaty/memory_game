@@ -1,32 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Card from "./Card";
 
-const Board = ({ size }) => {
-  const [tablica, setTablica] = useState([]);
+function Board({ size }) {
+  const [array, setArray] = useState([]);
 
   useEffect(() => {
-    const pobierzDane = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/board?size=${size}`);
-        setTablica(response.data);
+        const response = await axios.post("http://localhost:8000/board", {
+          size,
+        });
+        const almostReady = response.data.board;
+        const readyArray = await axios.put("http://localhost:8000/board", {
+          list: almostReady,
+        });
+        setArray(readyArray.data.shuffledList);
       } catch (error) {
-        console.error('Nie udało się pobrać danych:', error);
+        console.error("Nie udało się pobrać danych:", error);
       }
     };
 
-    pobierzDane();
+    fetchData();
   }, [size]);
 
   return (
-    <div>
-      <h2>Game Board</h2>
-      <div className="board">
-        {tablica.map((item, index) => (
-          <div key={index} className="card">Element{index+1}</div>
+    <div className="board-window">
+      <div className="grid-container">
+        {array.map((item, index) => (
+          <Card key={index} item={item} />
         ))}
       </div>
     </div>
   );
-};
+}
 
 export default Board;
