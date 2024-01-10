@@ -6,7 +6,7 @@ const ObjectId = require("mongodb").ObjectId;
 memoryRoutes.route("/board").post((req, res) => {
   const { size } = req.body;
 
-  const emoji = [
+  const emojiArray = [
     "🦔",
     "🐬",
     "🐫",
@@ -41,7 +41,9 @@ memoryRoutes.route("/board").post((req, res) => {
     "🐜",
   ];
 
-  let board = Array(size * size).fill("str");
+  const emoji = emojiArray.map((value) => ({ emoji: value, matched: false }));
+
+  let board = Array(size * size).fill(null);
 
   emoji.sort(() => Math.random() - 0.5);
 
@@ -67,6 +69,22 @@ memoryRoutes.put("/board", (req, res) => {
   const shuffledList = shuffleArray(list);
 
   res.json({ shuffledList });
+});
+
+memoryRoutes.route("/board/match").put((req, res) => {
+  const { choiceOne, choiceTwo, board } = req.body;
+
+  const areEqual = choiceOne.emoji === choiceTwo.emoji;
+
+  if (areEqual) {
+    const updatedBoard = board.map((card) =>
+      card.emoji === choiceOne.emoji ? { ...card, matched: true } : card
+    );
+
+    res.json({ areEqual, updatedBoard });
+  } else {
+    res.json({ areEqual });
+  }
 });
 
 module.exports = memoryRoutes;

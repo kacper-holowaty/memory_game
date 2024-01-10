@@ -1,19 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 
-function Card({ item }) {
-  const [isFlipped, setIsFlipped] = useState(false);
-
-  const handleCardClick = () => {
-    setIsFlipped(!isFlipped);
+function Card({ card, handleChoice, flipped, disabled }) {
+  const handleClick = () => {
+    if (!disabled) {
+      handleChoice(card);
+    }
   };
   return (
-    <div
-      className={`card ${isFlipped ? "flipped" : ""}`}
-      onClick={handleCardClick}
-    >
-      <div>
-        <div className={`front-card ${isFlipped ? "hidden" : ""}`}>{item}</div>
-        <div className={`back-card ${isFlipped ? "" : "hidden"}`}>?</div>
+    <div className="card">
+      <div className={flipped ? "flipped" : ""}>
+        <div className="front-card">{card.emoji}</div>
+        <div className="back-card" onClick={handleClick}>
+          ?
+        </div>
       </div>
     </div>
   );

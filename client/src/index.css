@@ -1,8 +1,6 @@
 .board-window {
   display: flex;
-  /* align-items: center; */
   justify-content: center;
-  /* height: 80vh; */
   margin: 0;
 }
 
@@ -12,19 +10,24 @@
   gap: 10px;
 }
 
-/* .card {
+.card {
+  position: relative;
+  cursor: pointer;
+}
+
+.front-card {
   border: 1px solid #ccc;
   padding: 10px;
   width: 100px;
   height: 100px;
   text-align: center;
   font-size: 4rem;
-} */
-.card {
-  position: relative; /* Dodane dla lepszego pozycjonowania */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
 }
 
-.front-card,
 .back-card {
   border: 1px solid #ccc;
   padding: 10px;
@@ -33,16 +36,27 @@
   text-align: center;
   font-size: 4rem;
   border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: aliceblue;
 }
 
-.front-card.hidden {
-  display: none;
+.card .front-card {
+  transform: rotateY(90deg);
+  position: absolute;
 }
 
-.back-card.hidden {
-  display: none;
+.flipped .front-card {
+  transform: rotateY(0deg);
 }
-/* .card:nth-child(5) { */
-/* visibility: hidden; // albo opacity: 0 */
-/* background-color: aquamarine; */
-/* } */
+
+.card .back-card {
+  transition: all ease-in 0.2s;
+  transition-delay: 0.2s;
+}
+
+.flipped .back-card {
+  transform: rotateY(90deg);
+  transition-delay: 0s;
+}
