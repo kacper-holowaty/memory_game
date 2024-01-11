@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Card from "./Card";
 import { useMemory } from "../context/MemoryContext";
+import Timer from "./Timer";
 
 function Board() {
   const { state } = useMemory();
@@ -72,6 +73,7 @@ function Board() {
 
   return (
     <div className="board-window">
+      <Timer />
       <div className="grid-container">
         {array.map((card, index) => (
           <Card
