@@ -36,6 +36,7 @@ const setupMQTT = require("./mqtt");
 app.use(cors());
 app.use(express.json());
 app.use(require("./routes/memory"));
+app.use(require("./routes/user"));
 
 // Połączenie z bazą danych
 http.listen(port, () => {
@@ -50,7 +51,7 @@ const mqttClient = setupMQTT();
 
 // WebSocket
 io.on("connection", (socket) => {
-  console.log("A user connected");
+  console.log("User connected with WebSocket");
 
   mqttClient.subscribe("timer");
 

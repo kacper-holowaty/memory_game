@@ -17,6 +17,7 @@ const reducer = (state, action) => {
 export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, {
     size: null,
+    numberOfPlayers: null,
   });
 
   const contextValue = {
