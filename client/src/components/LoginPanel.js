@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import RegistartionForm from "./RegistartionForm";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function LoginPanel() {
   const [loginForm, setLoginForm] = useState(true);
   const [loginError, setLoginError] = useState("");
+  const navigate = useNavigate();
 
   const showLoginForm = () => {
     setLoginForm(true);
@@ -20,26 +23,26 @@ function LoginPanel() {
       password: Yup.string().required("Hasło jest wymagane"),
     }),
     onSubmit: async (values) => {
-      //   try {
-      //     const response = await axios.post(
-      //       "http://localhost:5000/login",
-      //       values
-      //     );
-      //     if (response.data.success && response.data.isAdmin) {
-      //       dispatch({ type: "LOGIN" });
-      //       setLoginError("");
-      //       alert("Zalogowano jako administrator!");
-      //     } else {
-      //       dispatch({ type: "LOGOUT" });
-      //       setLoginError("Nieprawidłowy login lub hasło. Spróbuj ponownie.");
-      //     }
-      //   } catch (error) {
-      //     console.error("Nie udało się zalogować", error);
-      //     dispatch({ type: "LOGOUT" });
-      //     setLoginError(
-      //       "Wystąpił błąd podczas logowania. Spróbuj ponownie później."
-      //     );
-      //   }
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/login",
+          values
+        );
+        if (response.data.success) {
+          setLoginError("");
+          alert("Zalogowano jako administrator!");
+          setTimeout(() => {
+            navigate("/game");
+          }, 500);
+        } else {
+          setLoginError("Nieprawidłowy login lub hasło. Spróbuj ponownie.");
+        }
+      } catch (error) {
+        console.error("Nie udało się zalogować", error);
+        setLoginError(
+          "Wystąpił błąd podczas logowania. Spróbuj ponownie później."
+        );
+      }
     },
   });
 

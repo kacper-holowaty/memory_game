@@ -11,6 +11,7 @@ function Board() {
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
   const [disabled, setDisabled] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,6 +24,12 @@ function Board() {
           list: almostReady,
         });
         setArray(readyArray.data.shuffledList);
+
+        // const getUser = await axios.get("http://localhost:8000/currentUser", {
+        //   withCredentials: true,
+        // });
+        // console.log(getUser.data);
+        // setCurrentUser(getUser.data.user);
       } catch (error) {
         console.error("Nie udało się pobrać danych:", error);
       }
@@ -73,7 +80,9 @@ function Board() {
 
   return (
     <div className="board-window">
+      <h3>{currentUser}</h3>
       <Timer />
+
       <div className="grid-container">
         {array.map((card, index) => (
           <Card
