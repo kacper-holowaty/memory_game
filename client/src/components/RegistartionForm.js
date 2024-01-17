@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -22,7 +22,6 @@ function RegistartionForm({ showLoginForm }) {
     }),
     onSubmit: async (values) => {
       try {
-        console.log("Halo?");
         const response = await axios.post(
           "http://localhost:8000/register",
           values

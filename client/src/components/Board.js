@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+// import mqtt from "mqtt";
 // import Cookies from "js-cookie";
 import Card from "./Card";
 import { useMemory } from "../context/MemoryContext";
@@ -13,6 +14,9 @@ function Board() {
   const [choiceTwo, setChoiceTwo] = useState(null);
   const [disabled, setDisabled] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [firstMoveMade, setFirstMoveMade] = useState(false);
+
+  // const mqttClient = mqtt.connect("ws://localhost:8000");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +42,10 @@ function Board() {
     fetchData();
   }, [size, currentUserId]);
 
-  const handleChoice = (card) => {
+  const handleChoice = async (card) => {
+    if (!firstMoveMade) {
+      setFirstMoveMade(true);
+    }
     choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
   };
 
@@ -81,7 +88,7 @@ function Board() {
   return (
     <div className="board-window">
       <h3>{currentUser}</h3>
-      <Timer />
+      <Timer startTimer={firstMoveMade} />
       <div className="grid-container">
         {array.map((card, index) => (
           <Card
