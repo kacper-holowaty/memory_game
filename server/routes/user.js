@@ -5,6 +5,7 @@ const dbo = require("../db/conn");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const ObjectId = require("mongodb").ObjectId;
+// userRoutes.use(cookieParser());
 
 userRoutes.route("/register").post(async (req, res) => {
   const saltRounds = 10;
@@ -63,19 +64,22 @@ userRoutes.route("/login").post(async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (isPasswordValid) {
-      const token = jwt.sign(
-        { userId: user._id, login: user.login },
-        "secret_key",
-        {
-          expiresIn: "1h",
-        }
-      );
+      // nie działają mi cookies (nie wyświetlają się nawet w Application/cookies w dev tools)
+      // const token = jwt.sign({ userId: user._id }, "secret", {
+      //   expiresIn: "1h",
+      // });
 
-      res.cookie("jwt", token, { httpOnly: true, maxAge: 3600000 });
+      // res.cookie("jwt", token, {
+      //   httpOnly: true,
+      //   maxAge: 3600000,
+      // });
+
+      // res.cookie("user_id", user._id, { httpOnly: true });
 
       res.status(200).json({
         success: true,
         message: "Zalogowano pomyślnie.",
+        userId: user._id,
       });
     } else {
       res.status(401).json({
@@ -92,31 +96,24 @@ userRoutes.route("/login").post(async (req, res) => {
   }
 });
 
-// // Middleware do weryfikacji tokena JWT
-// const checkToken = (req, res, next) => {
-//   const token = req.cookies.jwt;
-//   console.log(token);
+userRoutes.route("/getLoginById/:userId").get(async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const db = dbo.getDb();
+    const user = await db
+      .collection("users")
+      .findOne({ _id: ObjectId(userId) });
 
-//   if (!token) {
-//     return res
-//       .status(401)
-//       .json({ success: false, message: "Brak autoryzacji." });
-//   }
-
-//   jwt.verify(token, "secret_key", (err, decoded) => {
-//     if (err) {
-//       return res
-//         .status(401)
-//         .json({ success: false, message: "Nieprawidłowy token." });
-//     }
-
-//     req.user = decoded;
-//     next();
-//   });
-// };
-
-// userRoutes.route("/currentUser").get(checkToken, (req, res) => {
-//   res.status(200).json({ success: true, user: req.user });
-// });
-
+    res.status(200).json({
+      success: true,
+      login: user.login,
+    });
+  } catch (error) {
+    console.error("Błąd podczas pobierania loginu użytkownika:", error);
+    res.status(500).json({
+      success: false,
+      message: "Wystąpił błąd podczas pobierania loginu użytkownika.",
+    });
+  }
+});
 module.exports = userRoutes;

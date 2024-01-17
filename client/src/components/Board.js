@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+// import Cookies from "js-cookie";
 import Card from "./Card";
 import { useMemory } from "../context/MemoryContext";
 import Timer from "./Timer";
 
 function Board() {
   const { state } = useMemory();
-  const { size } = state;
+  const { size, currentUserId } = state;
   const [array, setArray] = useState([]);
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
@@ -25,18 +26,17 @@ function Board() {
         });
         setArray(readyArray.data.shuffledList);
 
-        // const getUser = await axios.get("http://localhost:8000/currentUser", {
-        //   withCredentials: true,
-        // });
-        // console.log(getUser.data);
-        // setCurrentUser(getUser.data.user);
+        const loginResponse = await axios.get(
+          `http://localhost:8000/getLoginById/${currentUserId}`
+        );
+        setCurrentUser(loginResponse.data.login);
       } catch (error) {
         console.error("Nie udało się pobrać danych:", error);
       }
     };
 
     fetchData();
-  }, [size]);
+  }, [size, currentUserId]);
 
   const handleChoice = (card) => {
     choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
@@ -82,7 +82,6 @@ function Board() {
     <div className="board-window">
       <h3>{currentUser}</h3>
       <Timer />
-
       <div className="grid-container">
         {array.map((card, index) => (
           <Card

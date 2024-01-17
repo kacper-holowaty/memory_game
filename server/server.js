@@ -17,13 +17,14 @@ const dbo = require("./db/conn");
 const setupMQTT = require("./mqtt");
 
 // Inicjalizacja Express
-// app.use(cors());
-app.use(
-  cors({
-    origin: "http://localhost:3000", // Lub inny adres swojej aplikacji
-    credentials: true,
-  })
-);
+app.use(cors());
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000", // Lub inny adres swojej aplikacji
+//     credentials: true,
+//   })
+// );
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(require("./routes/memory"));

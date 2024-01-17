@@ -9,6 +9,11 @@ const reducer = (state, action) => {
         ...state,
         size: action.payload,
       };
+    case "SET_USER_ID":
+      return {
+        ...state,
+        currentUserId: action.payload,
+      };
     default:
       return state;
   }
@@ -18,6 +23,7 @@ export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, {
     size: null,
     numberOfPlayers: null,
+    currentUserId: null,
   });
 
   const contextValue = {

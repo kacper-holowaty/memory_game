@@ -4,10 +4,12 @@ import * as Yup from "yup";
 import RegistartionForm from "./RegistartionForm";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useMemory } from "../context/MemoryContext";
 
 function LoginPanel() {
   const [loginForm, setLoginForm] = useState(true);
   const [loginError, setLoginError] = useState("");
+  const { dispatch } = useMemory();
   const navigate = useNavigate();
 
   const showLoginForm = () => {
@@ -31,6 +33,7 @@ function LoginPanel() {
         if (response.data.success) {
           setLoginError("");
           alert("Zalogowano jako administrator!");
+          dispatch({ type: "SET_USER_ID", payload: response.data.userId });
           setTimeout(() => {
             navigate("/game");
           }, 500);
