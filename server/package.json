@@ -23,6 +23,7 @@
     "mongodb": "^4.13.0",
     "mqtt": "^5.3.4",
     "precompiled-mqtt": "^4.3.14-beta",
-    "socket.io": "^4.7.3"
+    "socket.io": "^4.7.3",
+    "ws": "^8.16.0"
   }
 }
