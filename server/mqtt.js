@@ -15,11 +15,6 @@ function setupMQTT() {
     mqttClient.subscribe("timer");
 
     mqttClient.on("message", (topic, message) => {
-      console.log(
-        `Received MQTT message on topic ${topic}:`,
-        message.toString()
-      );
-      // gdzieś w tym miejscu musi być przesłanie informacji o stanie licznika na frontend
       if (topic === "timer_control") {
         handleTimerControlMessage(message.toString());
       }
@@ -57,14 +52,9 @@ function setupWebSocket(server, mqttClient) {
   const wss = new WebSocket.Server({ server });
 
   wss.on("connection", (ws) => {
-    console.log("User connected with WebSocket");
-
-    // Ustawienia dla WebSocket
     ws.on("message", (message) => {
-      console.log(`Received WebSocket message: ${message}`);
       mqttClient.subscribe("timer");
 
-      // Przekieruj wiadomość do MQTT
       mqttClient.publish("timer_control", message);
     });
 
@@ -74,10 +64,7 @@ function setupWebSocket(server, mqttClient) {
       }
     });
 
-    // ws.send(JSON.stringify({ event: "timer", value: 10 }));
-    ws.on("close", () => {
-      console.log("User disconnected");
-    });
+    ws.on("close", () => {});
   });
 }
 

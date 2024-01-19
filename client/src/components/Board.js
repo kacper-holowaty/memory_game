@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 // import mqtt from "mqtt";
-// import Cookies from "js-cookie";
+import Cookies from "js-cookie";
 import Card from "./Card";
 import { useMemory } from "../context/MemoryContext";
 import Timer from "./Timer";
 
 function Board() {
   const { state } = useMemory();
-  const { size, currentUserId } = state;
+  const { size } = state;
   const [array, setArray] = useState([]);
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
@@ -16,11 +16,10 @@ function Board() {
   const [currentUser, setCurrentUser] = useState(null);
   const [firstMoveMade, setFirstMoveMade] = useState(false);
 
-  // const socket = new WebSocket("ws://localhost:8000/mqtt");
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const webSocket = new WebSocket("ws://localhost:8000");
+    const webSocket = new WebSocket("ws://localhost:8000/mqtt");
 
     webSocket.onopen = () => {
       console.log("WebSocket połączony");
@@ -44,8 +43,9 @@ function Board() {
         });
         setArray(readyArray.data.shuffledList);
 
+        const userIdFromCookie = Cookies.get("user_id");
         const loginResponse = await axios.get(
-          `http://localhost:8000/getLoginById/${currentUserId}`
+          `http://localhost:8000/getLoginById/${userIdFromCookie}`
         );
         setCurrentUser(loginResponse.data.login);
       } catch (error) {
@@ -54,7 +54,7 @@ function Board() {
     };
 
     fetchData();
-  }, [size, currentUserId]);
+  }, [size]);
 
   const handleChoice = (card) => {
     if (!firstMoveMade) {
@@ -96,9 +96,6 @@ function Board() {
 
           if (updatedBoard) {
             if (updatedBoard.every((x) => x.matched === true)) {
-              console.log("CZY TO DZIAŁA?");
-
-              // Sprawdź, czy socket istnieje
               if (socket) {
                 socket.send("stop");
               }
@@ -121,7 +118,6 @@ function Board() {
     <div className="board-window">
       <h3>{currentUser}</h3>
       <Timer />
-
       <div className="grid-container">
         {array.map((card, index) => (
           <Card

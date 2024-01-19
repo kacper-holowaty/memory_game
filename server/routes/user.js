@@ -2,7 +2,8 @@ const express = require("express");
 const userRoutes = express.Router();
 const bcrypt = require("bcrypt");
 const dbo = require("../db/conn");
-const cookieParser = require("cookie-parser");
+// const cookie =
+// const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const ObjectId = require("mongodb").ObjectId;
 // userRoutes.use(cookieParser());
@@ -64,22 +65,11 @@ userRoutes.route("/login").post(async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (isPasswordValid) {
-      // nie działają mi cookies (nie wyświetlają się nawet w Application/cookies w dev tools)
-      // const token = jwt.sign({ userId: user._id }, "secret", {
-      //   expiresIn: "1h",
-      // });
-
-      // res.cookie("jwt", token, {
-      //   httpOnly: true,
-      //   maxAge: 3600000,
-      // });
-
-      // res.cookie("user_id", user._id, { httpOnly: true });
+      res.cookie("user_id", user._id.toString(), { httpOnly: false });
 
       res.status(200).json({
         success: true,
         message: "Zalogowano pomyślnie.",
-        userId: user._id,
       });
     } else {
       res.status(401).json({
@@ -115,5 +105,14 @@ userRoutes.route("/getLoginById/:userId").get(async (req, res) => {
       message: "Wystąpił błąd podczas pobierania loginu użytkownika.",
     });
   }
+});
+
+userRoutes.route("/logout").delete((req, res) => {
+  res.clearCookie("user_id");
+
+  res.status(200).json({
+    success: true,
+    message: "Wylogowano pomyślnie.",
+  });
 });
 module.exports = userRoutes;

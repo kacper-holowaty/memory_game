@@ -9,11 +9,6 @@ const reducer = (state, action) => {
         ...state,
         size: action.payload,
       };
-    case "SET_USER_ID":
-      return {
-        ...state,
-        currentUserId: action.payload,
-      };
     default:
       return state;
   }
