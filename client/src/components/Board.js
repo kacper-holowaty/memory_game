@@ -16,7 +16,21 @@ function Board() {
   const [currentUser, setCurrentUser] = useState(null);
   const [firstMoveMade, setFirstMoveMade] = useState(false);
 
-  // const mqttClient = mqtt.connect("ws://localhost:8000");
+  // const socket = new WebSocket("ws://localhost:8000/mqtt");
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    const webSocket = new WebSocket("ws://localhost:8000");
+
+    webSocket.onopen = () => {
+      console.log("WebSocket połączony");
+    };
+    setSocket(webSocket);
+
+    return () => {
+      webSocket.close();
+    };
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,9 +56,11 @@ function Board() {
     fetchData();
   }, [size, currentUserId]);
 
-  const handleChoice = async (card) => {
+  const handleChoice = (card) => {
     if (!firstMoveMade) {
       setFirstMoveMade(true);
+
+      socket.send("start");
     }
     choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
   };
@@ -77,18 +93,35 @@ function Board() {
           } else {
             setTimeout(() => resetChoices(), 1000);
           }
+
+          if (updatedBoard) {
+            if (updatedBoard.every((x) => x.matched === true)) {
+              console.log("CZY TO DZIAŁA?");
+
+              // Sprawdź, czy socket istnieje
+              if (socket) {
+                socket.send("stop");
+              }
+            }
+          }
         } catch (error) {
           console.error("Błąd podczas porównywania kafelków:", error);
         }
       };
       fetchData();
+      if (array.every((x) => x.matched === true)) {
+        if (socket) {
+          socket.send("stop");
+        }
+      }
     }
-  }, [choiceOne, choiceTwo, array]);
+  }, [choiceOne, choiceTwo, array, socket]);
 
   return (
     <div className="board-window">
       <h3>{currentUser}</h3>
-      <Timer startTimer={firstMoveMade} />
+      <Timer />
+
       <div className="grid-container">
         {array.map((card, index) => (
           <Card
