@@ -107,12 +107,23 @@ userRoutes.route("/getLoginById/:userId").get(async (req, res) => {
   }
 });
 
-userRoutes.route("/logout").delete((req, res) => {
-  res.clearCookie("user_id");
+userRoutes.route("/logout").delete(async (req, res) => {
+  try {
+    const db = dbo.getDb("memorygame");
 
-  res.status(200).json({
-    success: true,
-    message: "Wylogowano pomyślnie.",
-  });
+    await db.collection("comments").deleteMany({});
+
+    res.clearCookie("user_id");
+    res.status(200).json({
+      success: true,
+      message: "Wylogowano pomyślnie. Wszystkie komentarze zostały usunięte.",
+    });
+  } catch (error) {
+    console.error("Błąd podczas usuwania komentarzy:", error);
+    res.status(500).json({
+      success: false,
+      message: "Wystąpił błąd podczas usuwania komentarzy.",
+    });
+  }
 });
 module.exports = userRoutes;

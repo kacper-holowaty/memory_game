@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-// import mqtt from "mqtt";
 import Cookies from "js-cookie";
 import Card from "./Card";
 import { useMemory } from "../context/MemoryContext";
 import Timer from "./Timer";
+import Comments from "./Comments";
+import { useNavigate } from "react-router-dom";
 
 function Board() {
   const { state } = useMemory();
@@ -15,11 +16,11 @@ function Board() {
   const [disabled, setDisabled] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [firstMoveMade, setFirstMoveMade] = useState(false);
-
+  const navigate = useNavigate();
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const webSocket = new WebSocket("ws://localhost:8000/mqtt");
+    const webSocket = new WebSocket("ws://localhost:8000");
 
     webSocket.onopen = () => {
       console.log("WebSocket połączony");
@@ -74,7 +75,7 @@ function Board() {
   useEffect(() => {
     if (choiceOne && choiceTwo) {
       setDisabled(true);
-      const fetchData = async () => {
+      const checkTiles = async () => {
         try {
           const response = await axios.put(
             "http://localhost:8000/board/match",
@@ -98,6 +99,10 @@ function Board() {
             if (updatedBoard.every((x) => x.matched === true)) {
               if (socket) {
                 socket.send("stop");
+                // dodanie wyniku do bazy (metoda post)
+                setTimeout(() => {
+                  navigate("/game/finish");
+                }, 5000);
               }
             }
           }
@@ -105,19 +110,17 @@ function Board() {
           console.error("Błąd podczas porównywania kafelków:", error);
         }
       };
-      fetchData();
-      if (array.every((x) => x.matched === true)) {
-        if (socket) {
-          socket.send("stop");
-        }
-      }
+      checkTiles();
     }
-  }, [choiceOne, choiceTwo, array, socket]);
+  }, [choiceOne, choiceTwo, array, socket, navigate]);
 
   return (
     <div className="board-window">
-      <h3>{currentUser}</h3>
-      <Timer />
+      <div className="user-container">
+        <h3>{currentUser}</h3>
+        <Timer />
+        <Comments />
+      </div>
       <div className="grid-container">
         {array.map((card, index) => (
           <Card

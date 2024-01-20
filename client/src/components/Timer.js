@@ -5,7 +5,7 @@ const Timer = () => {
   const [secondsRemaining, setSecondsRemaining] = useState(0);
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:8000/mqtt");
+    const socket = new WebSocket("ws://localhost:8000");
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
