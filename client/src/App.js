@@ -4,6 +4,7 @@ import StartScreen from "./components/StartScreen";
 import Board from "./components/Board";
 import LoginPanel from "./components/LoginPanel";
 import FinishScreen from "./components/FinishScreen";
+import Leaderboard from "./components/Leaderboard";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/login" element={<LoginPanel />} />
         <Route path="/game" element={<Board />} />
         <Route path="/game/finish" element={<FinishScreen />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
       </Routes>
     </div>
   );

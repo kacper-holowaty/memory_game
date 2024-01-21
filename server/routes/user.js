@@ -115,10 +115,10 @@ userRoutes.route("/logout").delete(async (req, res) => {
       message: "Wylogowano pomyślnie. Wszystkie komentarze zostały usunięte.",
     });
   } catch (error) {
-    console.error("Błąd podczas usuwania komentarzy:", error);
+    console.error("Błąd podczas usuwania wylogowywania:", error);
     res.status(500).json({
       success: false,
-      message: "Wystąpił błąd podczas usuwania komentarzy.",
+      message: "Wystąpił błąd podczas wylogowywania.",
     });
   }
 });

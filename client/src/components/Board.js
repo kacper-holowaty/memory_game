@@ -99,7 +99,6 @@ function Board() {
 
           if (updatedBoard && updatedBoard.every((x) => x.matched === true)) {
             if (socket) {
-              // może tutaj logika dodawania do bazy?
               socket.send("stop");
               setTimeout(() => {
                 navigate("/game/finish");

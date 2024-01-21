@@ -7,7 +7,6 @@ scoreRoutes.route("/scores").post(async (req, res) => {
   try {
     const { size, currentUser, gameTime } = req.body;
 
-    // Mapa trudności
     const difficultyMap = {
       4: "ŁATWY",
       6: "ŚREDNI",
@@ -39,6 +38,62 @@ scoreRoutes.route("/scores").post(async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Wystąpił błąd podczas zapisywania wyniku gry.",
+    });
+  }
+});
+
+scoreRoutes.get("/scores", async (req, res) => {
+  try {
+    const db = dbo.getDb("memorygame");
+    const scoresCollection = db.collection("scores");
+
+    const sortOptions = {
+      gameTimeInSeconds: 1,
+    };
+
+    const filterOptions = {};
+
+    const playerName = req.query.player;
+    if (playerName) {
+      filterOptions.player = { $regex: new RegExp(playerName, "i") };
+    }
+
+    const difficulty = req.query.difficulty;
+    if (
+      difficulty &&
+      ["ŁATWY", "ŚREDNI", "TRUDNY"].includes(difficulty.toUpperCase())
+    ) {
+      filterOptions.difficulty = difficulty.toUpperCase();
+    }
+
+    const scores = await scoresCollection
+      .aggregate([
+        {
+          $match: filterOptions,
+        },
+        {
+          $addFields: {
+            gameTimeInSeconds: {
+              $toInt: "$gameTimeInSeconds",
+            },
+          },
+        },
+        {
+          $sort: sortOptions,
+        },
+      ])
+      .toArray();
+
+    res.status(200).json({
+      success: true,
+      message: "Pobrano wyniki.",
+      scores: scores,
+    });
+  } catch (error) {
+    console.error("Błąd podczas pobierania wyników:", error);
+    res.status(500).json({
+      success: false,
+      message: "Wystąpił błąd podczas pobierania wyników.",
     });
   }
 });

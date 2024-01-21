@@ -37,9 +37,7 @@ export const AppProvider = ({ children }) => {
     dispatch({ type: "SET_SOCKET", payload: socket });
 
     return () => {
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.close();
-      }
+      socket.close();
     };
   }, []);
   const contextValue = {

@@ -1,35 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useMemory } from "../context/MemoryContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function FinishScreen() {
-  const { state } = useMemory();
+  const { state, dispatch } = useMemory();
   const { size, currentUser, socket } = state;
-  // implementacja logiki:
-  // odczytywanie czasu przez mqtt
-  // zerowanie licznika przez mqtt
-  // odczytanie size
-  // dodanie danych do bazy, do kolekcji scores
-  // wywołanie axios logout (aby usunąć cookie oraz komentarze)
-  // ustawienie size na null (dispatch)
-  // dwa przyciski (play again) oraz (leaderboard)
-  // const [socket, setSocket] = useState(null);
   const [gameTime, setGameTime] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const finishGame = async () => {
       if (socket && socket.readyState === WebSocket.OPEN) {
         await socket.send("get_current_time");
 
-        // await socket.send("reset_timer"); // jeszcze nie tu
-
-        await axios.post("http://localhost:8000/scores", {
-          size,
-          currentUser,
-          gameTime,
-        });
-
-        // await axios.delete("http://localhost:8000/logout");
+        if (gameTime && currentUser && size) {
+          await axios.post("http://localhost:8000/scores", {
+            size,
+            currentUser,
+            gameTime,
+          });
+        }
       }
     };
     finishGame();
@@ -43,6 +33,21 @@ function FinishScreen() {
       }
     };
   }, [socket]);
+
+  const resetGame = async () => {
+    dispatch({ type: "SET_SIZE", payload: null });
+    dispatch({ type: "SET_CURRENT_USER", payload: null });
+    if (socket) {
+      await socket.send("reset_timer");
+    }
+    await axios.delete("http://localhost:8000/logout", {
+      withCredentials: true,
+    });
+    navigate("/");
+  };
+  const handleScores = () => {
+    navigate("/leaderboard");
+  };
 
   const displayTime = () => {
     const minutes = Math.floor(gameTime / 60);
@@ -60,7 +65,11 @@ function FinishScreen() {
   return (
     <div>
       <h2>Gratulacje {currentUser} udało ci się ukończyć grę!</h2>
-      <span>Twój czas: {displayTime()}</span>
+      <h2>Twój czas: {displayTime()}</h2>
+      <div>
+        <button onClick={resetGame}>Zagraj ponownie</button>
+        <button onClick={handleScores}>Najlepsze wyniki</button>
+      </div>
     </div>
   );
 }
