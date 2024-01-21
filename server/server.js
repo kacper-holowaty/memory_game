@@ -21,6 +21,7 @@ app.use(cookieParser());
 app.use(require("./routes/memory"));
 app.use(require("./routes/user"));
 app.use(require("./routes/comments"));
+app.use(require("./routes/scores"));
 
 http.listen(port, () => {
   dbo.connectToServer(function (err) {

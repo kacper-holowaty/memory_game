@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useContext } from "react";
+import React, { createContext, useReducer, useContext, useEffect } from "react";
 
 const MemoryContext = createContext();
 
@@ -9,6 +9,16 @@ const reducer = (state, action) => {
         ...state,
         size: action.payload,
       };
+    case "SET_CURRENT_USER":
+      return {
+        ...state,
+        currentUser: action.payload,
+      };
+    case "SET_SOCKET":
+      return {
+        ...state,
+        socket: action.payload,
+      };
     default:
       return state;
   }
@@ -18,9 +28,20 @@ export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, {
     size: null,
     numberOfPlayers: null,
-    currentUserId: null,
+    currentUser: null,
+    socket: null,
   });
 
+  useEffect(() => {
+    const socket = new WebSocket("ws://localhost:8000");
+    dispatch({ type: "SET_SOCKET", payload: socket });
+
+    return () => {
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.close();
+      }
+    };
+  }, []);
   const contextValue = {
     state,
     dispatch,

@@ -25,6 +25,10 @@ function setupMQTT() {
         startTimer();
       } else if (command === "stop") {
         stopTimer();
+      } else if (command === "reset_timer") {
+        resetTimer();
+      } else if (command === "get_current_time") {
+        getCurrentTime();
       }
     }
 
@@ -43,6 +47,15 @@ function setupMQTT() {
       isTimerRunning = false;
       clearInterval(intervalId);
     }
+
+    function resetTimer() {
+      seconds = 0;
+      mqttClient.publish("timer", seconds.toString());
+    }
+
+    function getCurrentTime() {
+      mqttClient.publish("current_time", seconds.toString());
+    }
   });
 
   return mqttClient;
@@ -54,13 +67,17 @@ function setupWebSocket(server, mqttClient) {
   wss.on("connection", (ws) => {
     ws.on("message", (message) => {
       mqttClient.subscribe("timer");
-
+      mqttClient.subscribe("current_time");
       mqttClient.publish("timer_control", message);
     });
 
     mqttClient.on("message", (topic, message) => {
       if (topic === "timer") {
         ws.send(JSON.stringify({ event: "timer", value: message.toString() }));
+      } else if (topic === "current_time") {
+        ws.send(
+          JSON.stringify({ event: "current_time", value: message.toString() })
+        );
       }
     });
 

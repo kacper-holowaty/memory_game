@@ -2,11 +2,7 @@ const express = require("express");
 const userRoutes = express.Router();
 const bcrypt = require("bcrypt");
 const dbo = require("../db/conn");
-// const cookie =
-// const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
 const ObjectId = require("mongodb").ObjectId;
-// userRoutes.use(cookieParser());
 
 userRoutes.route("/register").post(async (req, res) => {
   const saltRounds = 10;

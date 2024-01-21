@@ -8,13 +8,12 @@ import Comments from "./Comments";
 import { useNavigate } from "react-router-dom";
 
 function Board() {
-  const { state } = useMemory();
-  const { size } = state;
+  const { state, dispatch } = useMemory();
+  const { size, currentUser } = state;
   const [array, setArray] = useState([]);
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
   const [disabled, setDisabled] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
   const [firstMoveMade, setFirstMoveMade] = useState(false);
   const navigate = useNavigate();
   const [socket, setSocket] = useState(null);
@@ -48,14 +47,17 @@ function Board() {
         const loginResponse = await axios.get(
           `http://localhost:8000/getLoginById/${userIdFromCookie}`
         );
-        setCurrentUser(loginResponse.data.login);
+        dispatch({
+          type: "SET_CURRENT_USER",
+          payload: loginResponse.data.login,
+        });
       } catch (error) {
         console.error("Nie udało się pobrać danych:", error);
       }
     };
 
     fetchData();
-  }, [size]);
+  }, [size, dispatch]);
 
   const handleChoice = (card) => {
     if (!firstMoveMade) {
@@ -95,15 +97,13 @@ function Board() {
             setTimeout(() => resetChoices(), 1000);
           }
 
-          if (updatedBoard) {
-            if (updatedBoard.every((x) => x.matched === true)) {
-              if (socket) {
-                socket.send("stop");
-                // dodanie wyniku do bazy (metoda post)
-                setTimeout(() => {
-                  navigate("/game/finish");
-                }, 5000);
-              }
+          if (updatedBoard && updatedBoard.every((x) => x.matched === true)) {
+            if (socket) {
+              // może tutaj logika dodawania do bazy?
+              socket.send("stop");
+              setTimeout(() => {
+                navigate("/game/finish");
+              }, 3000);
             }
           }
         } catch (error) {
