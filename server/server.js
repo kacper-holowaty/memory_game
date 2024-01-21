@@ -22,6 +22,16 @@ app.use(require("./routes/memory"));
 app.use(require("./routes/user"));
 app.use(require("./routes/comments"));
 app.use(require("./routes/scores"));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 
 http.listen(port, () => {
   dbo.connectToServer(function (err) {

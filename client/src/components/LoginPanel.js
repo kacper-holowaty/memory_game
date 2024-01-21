@@ -37,14 +37,16 @@ function LoginPanel() {
           setTimeout(() => {
             navigate("/game");
           }, 500);
-        } else {
-          setLoginError("Nieprawidłowy login lub hasło. Spróbuj ponownie.");
         }
       } catch (error) {
-        console.error("Nie udało się zalogować", error);
-        setLoginError(
-          "Wystąpił błąd podczas logowania. Spróbuj ponownie później."
-        );
+        if (error.response && error.response.status === 401) {
+          setLoginError("Nieprawidłowy login lub hasło. Spróbuj ponownie.");
+        } else {
+          console.error("Nie udało się zalogować", error);
+          setLoginError(
+            "Wystąpił błąd podczas logowania. Spróbuj ponownie później."
+          );
+        }
       }
     },
   });

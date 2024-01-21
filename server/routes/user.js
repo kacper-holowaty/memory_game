@@ -70,7 +70,7 @@ userRoutes.route("/login").post(async (req, res) => {
     } else {
       res.status(401).json({
         success: false,
-        message: "Nieprawidłowe hasło.",
+        message: "Nieprawidłowy login lub hasło.",
       });
     }
   } catch (error) {
