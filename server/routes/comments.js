@@ -2,6 +2,7 @@ const express = require("express");
 const commentRoutes = express.Router();
 const dbo = require("../db/conn");
 const ObjectId = require("mongodb").ObjectId;
+const { saveLogsToFile } = require("../logger");
 
 commentRoutes.route("/comments").post(async (req, res) => {
   try {
@@ -11,6 +12,7 @@ commentRoutes.route("/comments").post(async (req, res) => {
 
     const result = await db.collection("comments").insertOne({ comment: text });
     if (result.acknowledged) {
+      saveLogsToFile("Dodano komentarz.");
       res.status(201).json({
         success: true,
         message: "Dodano komentarz.",
@@ -55,6 +57,7 @@ commentRoutes.route("/comments/:id").delete(async (req, res) => {
       .deleteOne({ _id: ObjectId(commentId) });
 
     if (result.deletedCount === 1) {
+      saveLogsToFile("Usunięto komentarz.");
       res
         .status(200)
         .json({ success: true, message: "Komentarz usunięty pomyślnie." });
@@ -87,6 +90,7 @@ commentRoutes.route("/comments/:id").put(async (req, res) => {
       );
 
     if (result.modifiedCount === 1) {
+      saveLogsToFile("Zedytowano komentarz.");
       res.status(200).json({
         success: true,
         message: "Komentarz został zaktualizowany.",

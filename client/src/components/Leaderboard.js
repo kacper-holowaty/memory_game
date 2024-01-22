@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useMemory } from "../context/MemoryContext";
 
 function Leaderboard() {
+  const { dispatch, state } = useMemory();
+  const { socket } = state;
+  const navigate = useNavigate();
   const [scores, setScores] = useState([]);
   const [playerName, setPlayerName] = useState("");
   const [difficulty, setDifficulty] = useState("");
@@ -42,8 +47,25 @@ function Leaderboard() {
     return `${minutes}:${formattedSeconds}`;
   };
 
+  // const goBack = async () => {
+  //   navigate("/game/finish");
+  // };
+
+  const resetGame = async () => {
+    dispatch({ type: "SET_SIZE", payload: null });
+    dispatch({ type: "SET_CURRENT_USER", payload: null });
+    if (socket) {
+      await socket.send("reset_timer");
+    }
+    await axios.delete("http://localhost:8000/logout", {
+      withCredentials: true,
+    });
+    navigate("/");
+  };
+
   return (
     <div>
+      <button onClick={resetGame}>Zagraj ponownie</button>
       <h2>Tablica wyników</h2>
       <form>
         <label>

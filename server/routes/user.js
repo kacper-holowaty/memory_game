@@ -3,6 +3,7 @@ const userRoutes = express.Router();
 const bcrypt = require("bcrypt");
 const dbo = require("../db/conn");
 const ObjectId = require("mongodb").ObjectId;
+const { saveLogsToFile } = require("../logger");
 
 userRoutes.route("/register").post(async (req, res) => {
   const saltRounds = 10;
@@ -61,8 +62,8 @@ userRoutes.route("/login").post(async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (isPasswordValid) {
+      saveLogsToFile(`Zalogowano jako ${user.login}`);
       res.cookie("user_id", user._id.toString(), { httpOnly: false });
-
       res.status(200).json({
         success: true,
         message: "Zalogowano pomyślnie.",
@@ -106,7 +107,7 @@ userRoutes.route("/getLoginById/:userId").get(async (req, res) => {
 userRoutes.route("/logout").delete(async (req, res) => {
   try {
     const db = dbo.getDb("memorygame");
-
+    saveLogsToFile("Pomyślnie wylogowano");
     await db.collection("comments").deleteMany({});
 
     res.clearCookie("user_id");
