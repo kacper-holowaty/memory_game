@@ -120,7 +120,7 @@ function Board() {
         <Timer />
         <Comments />
       </div>
-      <div className="grid-container">
+      <div className={`grid-container-${size}`}>
         {array.map((card, index) => (
           <Card
             key={index}

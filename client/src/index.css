@@ -4,12 +4,22 @@
   margin: 0;
 }
 
-.grid-container {
+.grid-container-4 {
   display: grid;
-  grid-template-columns: repeat(4, 120px);
+  grid-template-columns: repeat(4, 140px);
   gap: 10px;
 }
 
+.grid-container-6 {
+  display: grid;
+  grid-template-columns: repeat(6, 100px);
+  gap: 8.5px;
+}
+.grid-container-8 {
+  display: grid;
+  grid-template-columns: repeat(8, 78px);
+  gap: 5px;
+}
 .card {
   position: relative;
   cursor: pointer;
@@ -17,11 +27,7 @@
 
 .front-card {
   border: 1px solid #ccc;
-  padding: 10px;
-  width: 100px;
-  height: 100px;
   text-align: center;
-  font-size: 4rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,16 +36,30 @@
 
 .back-card {
   border: 1px solid #ccc;
-  padding: 10px;
-  width: 100px;
-  height: 100px;
   text-align: center;
-  font-size: 4rem;
   border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: aliceblue;
+}
+.size-4 {
+  padding: 10px;
+  width: 120px;
+  height: 120px;
+  font-size: 4rem;
+}
+.size-6 {
+  padding: 7.5px;
+  width: 85px;
+  height: 85px;
+  font-size: 3.5rem;
+}
+.size-8 {
+  width: 68px;
+  height: 68px;
+  padding: 5px;
+  font-size: 3rem;
 }
 
 .card .front-card {
