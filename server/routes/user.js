@@ -116,10 +116,30 @@ userRoutes.route("/logout").delete(async (req, res) => {
       message: "Wylogowano pomyślnie. Wszystkie komentarze zostały usunięte.",
     });
   } catch (error) {
-    console.error("Błąd podczas usuwania wylogowywania:", error);
+    console.error("Błąd podczas wylogowywania:", error);
     res.status(500).json({
       success: false,
       message: "Wystąpił błąd podczas wylogowywania.",
+    });
+  }
+});
+
+userRoutes.route("/playagain").delete(async (req, res) => {
+  try {
+    const db = dbo.getDb("memorygame");
+    saveLogsToFile("Zakończono rozgrywkę. Nie wylogowano.");
+    await db.collection("comments").deleteMany({});
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Ponownie rozpoczęto rozgrywkę. Wszystkie komentarze zostały usunięte.",
+    });
+  } catch (error) {
+    console.error("Błąd podczas ponownego rozpoczynania rozgrywki:", error);
+    res.status(500).json({
+      success: false,
+      message: "Wystąpił błąd podczas ponownego rozpoczynania rozgrywki.",
     });
   }
 });

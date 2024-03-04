@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useMemory } from "../context/MemoryContext";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 function StartScreen() {
   const { dispatch, state } = useMemory();
@@ -15,11 +16,14 @@ function StartScreen() {
   useEffect(() => {
     if (size && numberOfPlayers) {
       if (numberOfPlayers === 1) {
-        navigate("/login");
+        if (Cookies.get("user_id")) {
+          navigate("/game");
+        } else {
+          navigate("/login");
+        }
       }
     }
   }, [navigate, size, numberOfPlayers]);
-  // w przyszłości można dodać obsługę kilku graczy
   return (
     <div>
       <h2>Wybierz rozmiar planszy:</h2>

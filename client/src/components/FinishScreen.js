@@ -49,6 +49,17 @@ function FinishScreen() {
     navigate("/leaderboard");
   };
 
+  const playAgain = async () => {
+    dispatch({ type: "SET_SIZE", payload: null });
+    if (socket) {
+      await socket.send("reset_timer");
+    }
+    await axios.delete("http://localhost:8000/playagain", {
+      withCredentials: true,
+    });
+    navigate("/");
+  };
+
   const displayTime = () => {
     const minutes = Math.floor(gameTime / 60);
     const seconds = gameTime % 60;
@@ -67,7 +78,8 @@ function FinishScreen() {
       <h2>Gratulacje {currentUser} udało ci się ukończyć grę!</h2>
       <h2>Twój czas: {displayTime()}</h2>
       <div>
-        <button onClick={resetGame}>Zagraj ponownie</button>
+        <button onClick={resetGame}>Zakończ grę</button>
+        <button onClick={playAgain}>Zagraj ponownie</button>
         <button onClick={handleScores}>Najlepsze wyniki</button>
       </div>
     </div>

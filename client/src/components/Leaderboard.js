@@ -47,10 +47,6 @@ function Leaderboard() {
     return `${minutes}:${formattedSeconds}`;
   };
 
-  // const goBack = async () => {
-  //   navigate("/game/finish");
-  // };
-
   const resetGame = async () => {
     dispatch({ type: "SET_SIZE", payload: null });
     dispatch({ type: "SET_CURRENT_USER", payload: null });
@@ -62,10 +58,21 @@ function Leaderboard() {
     });
     navigate("/");
   };
+  const playAgain = async () => {
+    dispatch({ type: "SET_SIZE", payload: null });
+    if (socket) {
+      await socket.send("reset_timer");
+    }
+    await axios.delete("http://localhost:8000/playagain", {
+      withCredentials: true,
+    });
+    navigate("/");
+  };
 
   return (
     <div>
-      <button onClick={resetGame}>Zagraj ponownie</button>
+      <button onClick={resetGame}>Zakończ grę</button>
+      <button onClick={playAgain}>Zagraj ponownie</button>
       <h2>Tablica wyników</h2>
       <form>
         <label>
