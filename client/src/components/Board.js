@@ -4,7 +4,6 @@ import Cookies from "js-cookie";
 import Card from "./Card";
 import { useMemory } from "../context/MemoryContext";
 import Timer from "./Timer";
-import Comments from "./Comments";
 import { useNavigate } from "react-router-dom";
 
 function Board() {
@@ -118,7 +117,6 @@ function Board() {
       <div className="user-container">
         <h3>{currentUser}</h3>
         <Timer />
-        <Comments />
       </div>
       <div className={`grid-container-${size}`}>
         {array.map((card, index) => (

@@ -25,10 +25,11 @@ const Timer = () => {
   };
 
   return (
-    <div>
-      <span style={{ fontSize: "2rem" }}>
-        <GoClock /> {displayTime()}
+    <div className="timer">
+      <span className="timer-icon">
+        <GoClock />
       </span>
+      <span>{displayTime()}</span>
     </div>
   );
 };

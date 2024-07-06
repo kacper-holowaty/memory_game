@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import RegistartionForm from "./RegistartionForm";
+import RegistrationForm from "./RegistrationForm";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -52,12 +52,12 @@ function LoginPanel() {
   });
 
   return (
-    <div>
+    <div className="login-panel">
       {loginForm ? (
-        <div>
+        <div className="login-form">
           <h2>Zaloguj się</h2>
           <form onSubmit={formik.handleSubmit}>
-            <div>
+            <div className="form-group">
               <label htmlFor="login">Login:</label>
               <input
                 type="text"
@@ -68,10 +68,10 @@ function LoginPanel() {
                 value={formik.values.login}
               />
               {formik.touched.login && formik.errors.login && (
-                <span style={{ color: "red" }}>{formik.errors.login}</span>
+                <span className="error">{formik.errors.login}</span>
               )}
             </div>
-            <div>
+            <div className="form-group">
               <label htmlFor="password">Hasło:</label>
               <input
                 type="password"
@@ -82,24 +82,24 @@ function LoginPanel() {
                 value={formik.values.password}
               />
               {formik.touched.password && formik.errors.password && (
-                <span style={{ color: "red" }}>{formik.errors.password}</span>
+                <span className="error">{formik.errors.password}</span>
               )}
             </div>
-            <div>
+            <div className="form-actions">
               <button type="submit">Zaloguj się</button>
-              <div>
+              <div className="register-link">
                 Nie masz konta?
-                <button onClick={() => setLoginForm(false)}>
+                <button type="button" onClick={() => setLoginForm(false)}>
                   Zarejestruj się
                 </button>
               </div>
             </div>
-            {loginError && <div style={{ color: "red" }}>{loginError}</div>}
+            {loginError && <div className="error">{loginError}</div>}
           </form>
         </div>
       ) : (
         <div>
-          <RegistartionForm showLoginForm={showLoginForm} />
+          <RegistrationForm showLoginForm={showLoginForm} />
         </div>
       )}
     </div>

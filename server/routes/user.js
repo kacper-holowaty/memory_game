@@ -106,9 +106,9 @@ userRoutes.route("/getLoginById/:userId").get(async (req, res) => {
 
 userRoutes.route("/logout").delete(async (req, res) => {
   try {
-    const db = dbo.getDb("memorygame");
+    // const db = dbo.getDb("memorygame");
     saveLogsToFile("Pomyślnie wylogowano");
-    await db.collection("comments").deleteMany({});
+    // await db.collection("comments").deleteMany({});
 
     res.clearCookie("user_id");
     res.status(200).json({

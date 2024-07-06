@@ -1,6 +1,7 @@
 .board-window {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin: 0;
 }
 
@@ -32,6 +33,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 5px;
+  user-select: none;
 }
 
 .back-card {
@@ -42,6 +44,7 @@
   align-items: center;
   justify-content: center;
   background-color: aliceblue;
+  user-select: none;
 }
 .size-4 {
   padding: 10px;
@@ -79,4 +82,312 @@
 .flipped .back-card {
   transform: rotateY(90deg);
   transition-delay: 0s;
+}
+
+.timer {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+}
+
+.timer-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5px;
+}
+
+.user-container {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+}
+
+/* StartScreen.js */
+
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+.start-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  font-family: "Press Start 2P", system-ui;
+  font-size: 58px;
+  color: #ff4081;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+}
+
+.choose-board-size {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 24px;
+}
+
+.button-group {
+  margin: 10px 0;
+}
+
+.size-button,
+.start-button {
+  background-color: #6200ea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.size-button:hover {
+  background-color: #3700b3;
+}
+
+.start-button {
+  background-color: #03dac5;
+}
+
+.start-button.active:hover {
+  background-color: #018786;
+}
+
+.start-button.inactive {
+  background-color: #b0bec5;
+  cursor: not-allowed;
+}
+
+/* LoginPanel.css */
+
+/* .login-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.login-form {
+  width: 100%;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.form-actions {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #6200ea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #3700b3;
+}
+
+.register-link {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.register-link button {
+  background-color: #03dac5;
+  margin-top: 5px;
+}
+
+.register-link button:hover {
+  background-color: #018786;
+} */
+
+/* LoginPanel.css */
+
+.login-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  font-family: Arial, sans-serif;
+}
+
+.login-form {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  background-color: #f9f9f9;
+}
+
+.login-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.login-form .form-group {
+  margin-bottom: 15px;
+}
+
+.login-form label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.login-form input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.login-form .error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.login-form .form-actions {
+  display: flex;
+  justify-content: column;
+  align-items: center;
+}
+
+.login-form .form-actions button {
+  margin-bottom: 10px;
+  padding: 10px 30px;
+  background-color: #6200ea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-form .register-link {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.login-form .register-link button {
+  background-color: transparent;
+  border: none;
+  color: #6200ea;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* RegistrationForm.css */
+
+.registration-form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+}
+
+.registration-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.registration-form .form-group {
+  margin-bottom: 15px;
+}
+
+.registration-form label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.registration-form input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.registration-form .error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.registration-form .form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.registration-form button {
+  padding: 10px 20px;
+  background-color: #6200ea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.registration-form .back-to-login {
+  background-color: transparent;
+  border: none;
+  color: #6200ea;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 10px;
 }

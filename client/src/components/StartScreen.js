@@ -7,35 +7,48 @@ function StartScreen() {
   const { dispatch, state } = useMemory();
   const { size } = state;
   const navigate = useNavigate();
-  const [numberOfPlayers, setNumberOfPlayers] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isSizeSelected, setIsSizeSelected] = useState(false);
 
   function handleButton(rozmiar) {
     dispatch({ type: "SET_SIZE", payload: rozmiar });
+    setIsSizeSelected(true);
   }
 
   useEffect(() => {
-    if (size && numberOfPlayers) {
-      if (numberOfPlayers === 1) {
-        if (Cookies.get("user_id")) {
-          navigate("/game");
-        } else {
-          navigate("/login");
-        }
+    if (size && isPlaying) {
+      if (Cookies.get("user_id")) {
+        navigate("/game");
+      } else {
+        navigate("/login");
       }
     }
-  }, [navigate, size, numberOfPlayers]);
+  }, [navigate, size, isPlaying]);
   return (
-    <div>
-      <h2>Wybierz rozmiar planszy:</h2>
-      <div>
-        <button onClick={() => handleButton(4)}>4x4</button>
-        <button onClick={() => handleButton(6)}>6x6</button>
-        <button onClick={() => handleButton(8)}>8x8</button>
+    <div className="start-screen">
+      <h1 className="title">EMOJI MEMORY</h1>
+      <h2 className="choose-board-size">Wybierz rozmiar planszy:</h2>
+      <div className="button-group">
+        <button className="size-button" onClick={() => handleButton(4)}>
+          4x4
+        </button>
+        <button className="size-button" onClick={() => handleButton(6)}>
+          6x6
+        </button>
+        <button className="size-button" onClick={() => handleButton(8)}>
+          8x8
+        </button>
       </div>
-      <h2>Wybierz liczbę graczy:</h2>
       <div>
-        <button onClick={() => setNumberOfPlayers(1)}>1 gracz</button>
-        <button onClick={() => setNumberOfPlayers(2)}>2 graczy</button>
+        <button
+          className={`start-button ${isSizeSelected ? "active" : "inactive"}`}
+          onClick={() => isSizeSelected && setIsPlaying(true)}
+          disabled={!isSizeSelected}
+        >
+          🎮 Start
+        </button>
+        {/* <button onClick={() => setNumberOfPlayers(1)}>1 gracz</button> */}
+        {/* <button onClick={() => setNumberOfPlayers(2)}>2 graczy</button> */}
       </div>
     </div>
   );
