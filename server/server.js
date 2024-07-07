@@ -20,7 +20,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(require("./routes/memory"));
 app.use(require("./routes/user"));
-app.use(require("./routes/comments"));
 app.use(require("./routes/scores"));
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");

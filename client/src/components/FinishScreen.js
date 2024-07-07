@@ -74,13 +74,15 @@ function FinishScreen() {
   };
 
   return (
-    <div>
+    <div className="finish-screen-container">
       <h2>Gratulacje {currentUser} udało ci się ukończyć grę!</h2>
       <h2>Twój czas: {displayTime()}</h2>
-      <div>
+      <div className="finish-screen-buttons">
         <button onClick={resetGame}>Zakończ grę</button>
         <button onClick={playAgain}>Zagraj ponownie</button>
-        <button onClick={handleScores}>Najlepsze wyniki</button>
+        <button className="leaderboard-button" onClick={handleScores}>
+          Najlepsze wyniki
+        </button>
       </div>
     </div>
   );

@@ -47,8 +47,6 @@ function StartScreen() {
         >
           🎮 Start
         </button>
-        {/* <button onClick={() => setNumberOfPlayers(1)}>1 gracz</button> */}
-        {/* <button onClick={() => setNumberOfPlayers(2)}>2 graczy</button> */}
       </div>
     </div>
   );

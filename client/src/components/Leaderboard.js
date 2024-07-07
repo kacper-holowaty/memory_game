@@ -70,16 +70,21 @@ function Leaderboard() {
   };
 
   return (
-    <div>
-      <button onClick={resetGame}>Zakończ grę</button>
-      <button onClick={playAgain}>Zagraj ponownie</button>
-      <h2>Tablica wyników</h2>
-      <form>
+    <div className="leaderboard-container">
+      <div className="leaderboard-header">Tablica wyników</div>
+      <div className="leaderboard-buttons">
+        <button className="left-button-finish" onClick={resetGame}>
+          Zakończ grę
+        </button>
+        <button className="right-button-play-again" onClick={playAgain}>
+          Zagraj ponownie
+        </button>
+      </div>
+      <div className="leaderboard-form">
         <label>
           Nazwa gracza:
           <input type="text" value={playerName} onChange={handleInputChange} />
         </label>
-        <br />
         <label>
           Poziom trudności:
           <select value={difficulty} onChange={handleSelectChange}>
@@ -89,16 +94,18 @@ function Leaderboard() {
             <option value="TRUDNY">TRUDNY</option>
           </select>
         </label>
-      </form>
-      <ol>
-        {scores.map((score, index) => (
-          <li key={index}>
-            {`Nazwa gracza: ${score.player}, Czas: ${displayTime(
-              score.gameTimeInSeconds
-            )} min, Poziom trudności: ${score.difficulty}`}
-          </li>
-        ))}
-      </ol>
+      </div>
+      <div className="leaderboard-scores">
+        <ol>
+          {scores.map((score, index) => (
+            <li key={index}>
+              {`Nazwa gracza: ${score.player}, Czas: ${displayTime(
+                score.gameTimeInSeconds
+              )} min, Poziom trudności: ${score.difficulty}`}
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
   );
 }

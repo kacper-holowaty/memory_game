@@ -106,14 +106,12 @@ userRoutes.route("/getLoginById/:userId").get(async (req, res) => {
 
 userRoutes.route("/logout").delete(async (req, res) => {
   try {
-    // const db = dbo.getDb("memorygame");
     saveLogsToFile("Pomyślnie wylogowano");
-    // await db.collection("comments").deleteMany({});
 
     res.clearCookie("user_id");
     res.status(200).json({
       success: true,
-      message: "Wylogowano pomyślnie. Wszystkie komentarze zostały usunięte.",
+      message: "Wylogowano pomyślnie.",
     });
   } catch (error) {
     console.error("Błąd podczas wylogowywania:", error);
