@@ -6,7 +6,7 @@
 
 ###### Broker MQTT
 
-Aplikacja używa między innymi Timera, którego działania jest możliwa dzięki brokerowi MQTT.
+Aplikacja używa między innymi Timera, którego działanie jest możliwe dzięki brokerowi MQTT.
 
 Jako brokera używałem HiveMQ dostępnego pod adresem: [https://github.com/hivemq/hivemq-community-edition](https://github.com/hivemq/hivemq-community-edition).
 
