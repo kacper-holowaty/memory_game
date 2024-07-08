@@ -22,7 +22,7 @@ Przykładowe polecenie, za pomocą którego można uruchomić bazę mongo w kont
     -p 27017:27017 \
     --name baza-danych \
     -v data-vol:/data/db \
-    mongo:latest```
+    mongo:latest
 ````
 
 ## Uruchomienie
