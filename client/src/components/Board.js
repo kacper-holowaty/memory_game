@@ -1,10 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Card from "./Card";
 import { useMemory } from "../context/MemoryContext";
 import Timer from "./Timer";
 import { useNavigate } from "react-router-dom";
+
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
 
 function Board() {
   const { state, dispatch } = useMemory();
@@ -15,18 +23,21 @@ function Board() {
   const [disabled, setDisabled] = useState(false);
   const [firstMoveMade, setFirstMoveMade] = useState(false);
   const navigate = useNavigate();
+  const fetchDataCalled = useRef(false);
 
   useEffect(() => {
+    if (fetchDataCalled.current) {
+      return;
+    }
+    fetchDataCalled.current = true;
+
     const fetchData = async () => {
       try {
         const response = await axios.post("http://localhost:8000/board", {
           size,
         });
-        const almostReady = response.data.board;
-        const readyArray = await axios.put("http://localhost:8000/board", {
-          list: almostReady,
-        });
-        setArray(readyArray.data.shuffledList);
+        const unshuffledBoard = response.data.board;
+        setArray(shuffleArray(unshuffledBoard));
 
         const userIdFromCookie = Cookies.get("user_id");
         const loginResponse = await axios.get(
@@ -68,24 +79,22 @@ function Board() {
             {
               choiceOne,
               choiceTwo,
-              board: array,
             }
           );
 
-          const { areEqual, updatedBoard } = response.data;
+          const { areEqual } = response.data;
 
           if (areEqual) {
-            setArray(updatedBoard || array);
+            setArray((prevArray) =>
+              prevArray.map((card) =>
+                card.emoji === choiceOne.emoji
+                  ? { ...card, matched: true }
+                  : card
+              )
+            );
             resetChoices();
           } else {
             setTimeout(() => resetChoices(), 1000);
-          }
-
-          if (updatedBoard && updatedBoard.every((x) => x.matched === true)) {
-            dispatch({ type: "STOP_TIMER" });
-            setTimeout(() => {
-              navigate("/game/finish");
-            }, 3000);
           }
         } catch (error) {
           console.error("Błąd podczas porównywania kafelków:", error);
@@ -93,7 +102,16 @@ function Board() {
       };
       checkTiles();
     }
-  }, [choiceOne, choiceTwo, array, navigate, dispatch]);
+  }, [choiceOne, choiceTwo, dispatch]);
+
+  useEffect(() => {
+    if (array.length > 0 && array.every((card) => card.matched)) {
+      dispatch({ type: "STOP_TIMER" });
+      setTimeout(() => {
+        navigate("/game/finish");
+      }, 3000);
+    }
+  }, [array, dispatch, navigate]);
 
   return (
     <div className="board-window">

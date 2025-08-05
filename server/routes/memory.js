@@ -55,36 +55,12 @@ memoryRoutes.route("/board").post((req, res) => {
   res.json({ board });
 });
 
-memoryRoutes.put("/board", (req, res) => {
-  const { list } = req.body;
-
-  function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
-
-  const shuffledList = shuffleArray(list);
-
-  res.json({ shuffledList });
-});
-
 memoryRoutes.route("/board/match").put((req, res) => {
-  const { choiceOne, choiceTwo, board } = req.body;
+  const { choiceOne, choiceTwo } = req.body;
 
   const areEqual = choiceOne.emoji === choiceTwo.emoji;
 
-  if (areEqual) {
-    const updatedBoard = board.map((card) =>
-      card.emoji === choiceOne.emoji ? { ...card, matched: true } : card
-    );
-
-    res.json({ areEqual, updatedBoard });
-  } else {
-    res.json({ areEqual });
-  }
+  res.json({ areEqual });
 });
 
 module.exports = memoryRoutes;
