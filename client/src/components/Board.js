@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import Cookies from "js-cookie";
 import Card from "./Card";
 import { useMemory } from "../context/MemoryContext";
 import Timer from "./Timer";
@@ -26,6 +25,10 @@ function Board() {
   const fetchDataCalled = useRef(false);
 
   useEffect(() => {
+    if (!size) {
+      navigate("/");
+      return;
+    }
     if (fetchDataCalled.current) {
       return;
     }
@@ -33,27 +36,20 @@ function Board() {
 
     const fetchData = async () => {
       try {
-        const response = await axios.post("http://localhost:8000/board", {
-          size,
-        });
+        const response = await axios.post(
+          "http://localhost:8000/board",
+          { size },
+          { withCredentials: true }
+        );
         const unshuffledBoard = response.data.board;
         setArray(shuffleArray(unshuffledBoard));
-
-        const userIdFromCookie = Cookies.get("user_id");
-        const loginResponse = await axios.get(
-          `http://localhost:8000/getLoginById/${userIdFromCookie}`
-        );
-        dispatch({
-          type: "SET_CURRENT_USER",
-          payload: loginResponse.data.login,
-        });
       } catch (error) {
         console.error("Nie udało się pobrać danych:", error);
       }
     };
 
     fetchData();
-  }, [size, dispatch]);
+  }, [size, navigate]);
 
   const handleChoice = (card) => {
     if (!firstMoveMade) {
@@ -99,7 +95,7 @@ function Board() {
   return (
     <div className="board-window">
       <div className="user-container">
-        <h3>{currentUser}</h3>
+        <h3>{currentUser?.login}</h3>
         <Timer />
       </div>
       <div className={`grid-container-${size}`}>

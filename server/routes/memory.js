@@ -1,7 +1,8 @@
 const express = require("express");
 const memoryRoutes = express.Router();
+const verifyToken = require("../middleware/auth");
 
-memoryRoutes.route("/board").post((req, res) => {
+memoryRoutes.route("/board").post(verifyToken, (req, res) => {
   const { size } = req.body;
 
   const emojiArray = [

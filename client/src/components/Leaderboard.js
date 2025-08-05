@@ -18,6 +18,7 @@ function Leaderboard() {
             player: playerName,
             difficulty: difficulty,
           },
+          withCredentials: true,
         });
 
         setScores(response.data.scores);
@@ -61,12 +62,10 @@ function Leaderboard() {
     });
     navigate("/");
   };
-  const playAgain = async () => {
+  
+  const playAgain = () => {
     dispatch({ type: "SET_SIZE", payload: null });
     dispatch({ type: "RESET_TIMER" });
-    await axios.delete("http://localhost:8000/playagain", {
-      withCredentials: true,
-    });
     navigate("/");
   };
 

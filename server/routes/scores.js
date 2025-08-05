@@ -1,8 +1,9 @@
 const express = require("express");
 const scoreRoutes = express.Router();
 const dbo = require("../db/conn");
+const verifyToken = require("../middleware/auth");
 
-scoreRoutes.route("/scores").post(async (req, res) => {
+scoreRoutes.route("/scores").post(verifyToken, async (req, res) => {
   try {
     const { size, currentUser, gameTime } = req.body;
 
@@ -41,7 +42,7 @@ scoreRoutes.route("/scores").post(async (req, res) => {
   }
 });
 
-scoreRoutes.get("/scores", async (req, res) => {
+scoreRoutes.get("/scores", verifyToken, async (req, res) => {
   try {
     const db = dbo.getDb("memorygame");
     const scoresCollection = db.collection("scores");

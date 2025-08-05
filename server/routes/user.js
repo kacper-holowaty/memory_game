@@ -1,14 +1,34 @@
 const express = require("express");
 const userRoutes = express.Router();
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const Yup = require("yup");
 const dbo = require("../db/conn");
 const ObjectId = require("mongodb").ObjectId;
+const verifyToken = require("../middleware/auth");
 
 userRoutes.route("/register").post(async (req, res) => {
-  const saltRounds = 10;
   const { login, password } = req.body;
 
+  const registrationSchema = Yup.object({
+    login: Yup.string()
+      .required("Login jest wymagany")
+      .min(3, "Login musi mieć co najmniej 3 znaki")
+      .max(20, "Login może mieć maksymalnie 20 znaków")
+      .matches(
+        /^[a-zA-Z0-9ąęółśżźćńĄĘÓŁŚŻŹĆŃ_.-]*$/,
+        "Login może zawierać tylko litery, cyfry i znaki: _ - ."
+      ),
+    password: Yup.string()
+      .required("Hasło jest wymagane")
+      .min(6, "Hasło musi mieć co najmniej 6 znaków")
+      .max(30, "Hasło może mieć maksymalnie 30 znaków"),
+  });
+
   try {
+    await registrationSchema.validate({ login, password });
+
+    const saltRounds = 10;
     const db = dbo.getDb();
     const existingUser = await db.collection("users").findOne({ login });
     if (existingUser) {
@@ -26,9 +46,24 @@ userRoutes.route("/register").post(async (req, res) => {
     });
 
     if (result.acknowledged && result.insertedId) {
+      const newUser = { _id: result.insertedId, login };
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+
       res.status(201).json({
         success: true,
-        message: "Użytkownik został pomyślnie zarejestrowany.",
+        message: "Użytkownik został pomyślnie zarejestrowany i zalogowany.",
+        user: {
+          id: newUser._id,
+          login: newUser.login,
+        },
       });
     } else {
       res.status(500).json({
@@ -37,6 +72,9 @@ userRoutes.route("/register").post(async (req, res) => {
       });
     }
   } catch (error) {
+    if (error instanceof Yup.ValidationError) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
     console.error("Błąd podczas rejestracji użytkownika:", error);
     res
       .status(500)
@@ -61,10 +99,23 @@ userRoutes.route("/login").post(async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (isPasswordValid) {
-      res.cookie("user_id", user._id.toString(), { httpOnly: false });
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+
       res.status(200).json({
         success: true,
         message: "Zalogowano pomyślnie.",
+        user: {
+          id: user._id,
+          login: user.login,
+        },
       });
     } else {
       res.status(401).json({
@@ -81,30 +132,39 @@ userRoutes.route("/login").post(async (req, res) => {
   }
 });
 
-userRoutes.route("/getLoginById/:userId").get(async (req, res) => {
-  const { userId } = req.params;
+userRoutes.route("/me").get(verifyToken, async (req, res) => {
   try {
     const db = dbo.getDb();
     const user = await db
       .collection("users")
-      .findOne({ _id: ObjectId(userId) });
+      .findOne({ _id: new ObjectId(req.user.id) });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Użytkownik nie znaleziony.",
+      });
+    }
 
     res.status(200).json({
       success: true,
-      login: user.login,
+      user: {
+        id: user._id,
+        login: user.login,
+      },
     });
   } catch (error) {
-    console.error("Błąd podczas pobierania loginu użytkownika:", error);
+    console.error("Błąd podczas pobierania danych użytkownika:", error);
     res.status(500).json({
       success: false,
-      message: "Wystąpił błąd podczas pobierania loginu użytkownika.",
+      message: "Wystąpił błąd podczas pobierania danych użytkownika.",
     });
   }
 });
 
 userRoutes.route("/logout").delete(async (req, res) => {
   try {
-    res.clearCookie("user_id");
+    res.clearCookie("token");
     res.status(200).json({
       success: true,
       message: "Wylogowano pomyślnie.",
@@ -118,22 +178,4 @@ userRoutes.route("/logout").delete(async (req, res) => {
   }
 });
 
-userRoutes.route("/playagain").delete(async (req, res) => {
-  try {
-    const db = dbo.getDb("memorygame");
-    await db.collection("comments").deleteMany({});
-
-    res.status(200).json({
-      success: true,
-      message:
-        "Ponownie rozpoczęto rozgrywkę. Wszystkie komentarze zostały usunięte.",
-    });
-  } catch (error) {
-    console.error("Błąd podczas ponownego rozpoczynania rozgrywki:", error);
-    res.status(500).json({
-      success: false,
-      message: "Wystąpił błąd podczas ponownego rozpoczynania rozgrywki.",
-    });
-  }
-});
 module.exports = userRoutes;

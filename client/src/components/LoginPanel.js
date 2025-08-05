@@ -4,11 +4,13 @@ import * as Yup from "yup";
 import RegistrationForm from "./RegistrationForm";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useMemory } from "../context/MemoryContext";
 
 function LoginPanel() {
   const [loginForm, setLoginForm] = useState(true);
   const [loginError, setLoginError] = useState("");
   const navigate = useNavigate();
+  const { dispatch } = useMemory();
 
   const showLoginForm = () => {
     setLoginForm(true);
@@ -33,7 +35,7 @@ function LoginPanel() {
         );
         if (response.data.success) {
           setLoginError("");
-          alert("Pomyślnie zalogowano!");
+          dispatch({ type: "SET_CURRENT_USER", payload: response.data.user });
           setTimeout(() => {
             navigate("/game");
           }, 500);

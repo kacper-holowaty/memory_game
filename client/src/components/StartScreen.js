@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useMemory } from "../context/MemoryContext";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
-
 function StartScreen() {
   const { dispatch, state } = useMemory();
-  const { size } = state;
+  const { size, currentUser } = state;
   const navigate = useNavigate();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isSizeSelected, setIsSizeSelected] = useState(false);
@@ -17,13 +15,13 @@ function StartScreen() {
 
   useEffect(() => {
     if (size && isPlaying) {
-      if (Cookies.get("user_id")) {
+      if (currentUser) {
         navigate("/game");
       } else {
         navigate("/login");
       }
     }
-  }, [navigate, size, isPlaying]);
+  }, [navigate, size, isPlaying, currentUser]);
   return (
     <div className="start-screen">
       <h1 className="title">EMOJI MEMORY</h1>

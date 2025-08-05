@@ -13,11 +13,15 @@ function FinishScreen() {
     const saveScore = async () => {
       if (currentUser && size && time && !scoreSent.current) {
         scoreSent.current = true;
-        await axios.post("http://localhost:8000/scores", {
-          size,
-          currentUser,
-          gameTime: time,
-        });
+        await axios.post(
+          "http://localhost:8000/scores",
+          {
+            size,
+            currentUser: currentUser.login,
+            gameTime: time,
+          },
+          { withCredentials: true }
+        );
       }
     };
     saveScore();
@@ -36,12 +40,9 @@ function FinishScreen() {
     navigate("/leaderboard");
   };
 
-  const playAgain = async () => {
+  const playAgain = () => {
     dispatch({ type: "RESET_TIMER" });
     dispatch({ type: "SET_SIZE", payload: null });
-    await axios.delete("http://localhost:8000/playagain", {
-      withCredentials: true,
-    });
     navigate("/");
   };
 
@@ -62,7 +63,7 @@ function FinishScreen() {
 
   return (
     <div className="finish-screen-container">
-      <h2>Gratulacje {currentUser} udało ci się ukończyć grę!</h2>
+      <h2>Gratulacje {currentUser?.login} udało ci się ukończyć grę!</h2>
       <h2>Twój czas: {displayTime()}</h2>
       <div className="finish-screen-buttons">
         <button onClick={resetGame}>Zakończ grę</button>
