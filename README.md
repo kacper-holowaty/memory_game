@@ -6,7 +6,7 @@
 
 ###### Broker MQTT
 
-Aplikacja używa między innymi Timera, którego działania jest możliwa dzięki brokerowi MQTT.
+Aplikacja używa między innymi Timera, którego działanie jest możliwe dzięki brokerowi MQTT.
 
 Jako brokera używałem HiveMQ dostępnego pod adresem: [https://github.com/hivemq/hivemq-community-edition](https://github.com/hivemq/hivemq-community-edition).
 
@@ -22,7 +22,7 @@ Przykładowe polecenie, za pomocą którego można uruchomić bazę mongo w kont
     -p 27017:27017 \
     --name baza-danych \
     -v data-vol:/data/db \
-    mongo:latest```
+    mongo:latest
 ````
 
 ## Uruchomienie
