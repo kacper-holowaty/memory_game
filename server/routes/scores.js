@@ -20,6 +20,7 @@ scoreRoutes.route("/scores").post(verifyToken, async (req, res) => {
       player: currentUser,
       difficulty,
       gameTime: gameTime,
+      createdAt: new Date().toISOString(),
     });
 
     if (result.acknowledged) {
