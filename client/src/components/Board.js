@@ -72,37 +72,20 @@ function Board() {
   useEffect(() => {
     if (choiceOne && choiceTwo) {
       setDisabled(true);
-      const checkTiles = async () => {
-        try {
-          const response = await axios.put(
-            "http://localhost:8000/board/match",
-            {
-              choiceOne,
-              choiceTwo,
-            }
-          );
-
-          const { areEqual } = response.data;
-
-          if (areEqual) {
-            setArray((prevArray) =>
-              prevArray.map((card) =>
-                card.emoji === choiceOne.emoji
-                  ? { ...card, matched: true }
-                  : card
-              )
-            );
-            resetChoices();
-          } else {
-            setTimeout(() => resetChoices(), 1000);
-          }
-        } catch (error) {
-          console.error("Błąd podczas porównywania kafelków:", error);
-        }
-      };
-      checkTiles();
+      if (choiceOne.emoji === choiceTwo.emoji) {
+        setArray((prevArray) =>
+          prevArray.map((card) =>
+            card.emoji === choiceOne.emoji
+              ? { ...card, matched: true }
+              : card
+          )
+        );
+        resetChoices();
+      } else {
+        setTimeout(() => resetChoices(), 1000);
+      }
     }
-  }, [choiceOne, choiceTwo, dispatch]);
+  }, [choiceOne, choiceTwo]);
 
   useEffect(() => {
     if (array.length > 0 && array.every((card) => card.matched)) {

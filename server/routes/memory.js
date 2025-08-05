@@ -1,7 +1,5 @@
 const express = require("express");
 const memoryRoutes = express.Router();
-const dbo = require("../db/conn");
-const ObjectId = require("mongodb").ObjectId;
 
 memoryRoutes.route("/board").post((req, res) => {
   const { size } = req.body;
@@ -53,14 +51,6 @@ memoryRoutes.route("/board").post((req, res) => {
   }
 
   res.json({ board });
-});
-
-memoryRoutes.route("/board/match").put((req, res) => {
-  const { choiceOne, choiceTwo } = req.body;
-
-  const areEqual = choiceOne.emoji === choiceTwo.emoji;
-
-  res.json({ areEqual });
 });
 
 module.exports = memoryRoutes;

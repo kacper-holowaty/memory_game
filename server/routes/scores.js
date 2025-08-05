@@ -1,7 +1,6 @@
 const express = require("express");
 const scoreRoutes = express.Router();
 const dbo = require("../db/conn");
-const ObjectId = require("mongodb").ObjectId;
 
 scoreRoutes.route("/scores").post(async (req, res) => {
   try {
