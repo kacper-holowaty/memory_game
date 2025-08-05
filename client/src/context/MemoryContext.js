@@ -48,7 +48,7 @@ export const AppProvider = ({ children }) => {
     if (state.isTimerRunning) {
       timerRef.current = setInterval(() => {
         dispatch({ type: "TICK" });
-      }, 1000);
+      }, 10);
     } else {
       clearInterval(timerRef.current);
     }

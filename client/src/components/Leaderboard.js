@@ -38,12 +38,18 @@ function Leaderboard() {
   };
 
   const displayTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
+    const minutes = Math.floor(time / 6000);
+    const seconds = Math.floor((time % 6000) / 100);
+    const centiseconds = time % 100;
 
-    const formattedSeconds = String(seconds).padStart(2, "0");
+    const formattedCentiseconds = String(centiseconds).padStart(2, "0");
 
-    return `${minutes}:${formattedSeconds}`;
+    if (minutes > 0) {
+      const formattedSeconds = String(seconds).padStart(2, "0");
+      return `${minutes} min ${formattedSeconds}.${formattedCentiseconds} s`;
+    } else {
+      return `${seconds}.${formattedCentiseconds} s`;
+    }
   };
 
   const resetGame = async () => {
@@ -95,8 +101,8 @@ function Leaderboard() {
           {scores.map((score, index) => (
             <li key={index}>
               {`Nazwa gracza: ${score.player}, Czas: ${displayTime(
-                score.gameTimeInSeconds
-              )} min, Poziom trudności: ${score.difficulty}`}
+                score.gameTime
+              )}, Poziom trudności: ${score.difficulty}`}
             </li>
           ))}
         </ol>

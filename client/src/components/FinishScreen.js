@@ -46,15 +46,17 @@ function FinishScreen() {
   };
 
   const displayTime = () => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
+    const minutes = Math.floor(time / 6000);
+    const seconds = Math.floor((time % 6000) / 100);
+    const centiseconds = time % 100;
 
-    const formattedSeconds = String(seconds).padStart(2, "0");
+    const formattedCentiseconds = String(centiseconds).padStart(2, "0");
 
-    if (time < 60) {
-      return `${time} s`;
+    if (minutes > 0) {
+      const formattedSeconds = String(seconds).padStart(2, "0");
+      return `${minutes} min ${formattedSeconds}.${formattedCentiseconds} s`;
     } else {
-      return `${minutes}:${formattedSeconds} min`;
+      return `${seconds}.${formattedCentiseconds} s`;
     }
   };
 

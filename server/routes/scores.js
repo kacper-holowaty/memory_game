@@ -18,7 +18,7 @@ scoreRoutes.route("/scores").post(async (req, res) => {
     const result = await db.collection("scores").insertOne({
       player: currentUser,
       difficulty,
-      gameTimeInSeconds: gameTime,
+      gameTime: gameTime,
     });
 
     if (result.acknowledged) {
@@ -47,7 +47,7 @@ scoreRoutes.get("/scores", async (req, res) => {
     const scoresCollection = db.collection("scores");
 
     const sortOptions = {
-      gameTimeInSeconds: 1,
+      gameTime: 1,
     };
 
     const filterOptions = {};
@@ -72,8 +72,8 @@ scoreRoutes.get("/scores", async (req, res) => {
         },
         {
           $addFields: {
-            gameTimeInSeconds: {
-              $toInt: "$gameTimeInSeconds",
+            gameTime: {
+              $toInt: "$gameTime",
             },
           },
         },
