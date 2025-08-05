@@ -1,4 +1,10 @@
-import React, { createContext, useReducer, useContext, useEffect } from "react";
+import React, {
+  createContext,
+  useReducer,
+  useContext,
+  useEffect,
+  useRef,
+} from "react";
 
 const MemoryContext = createContext();
 
@@ -14,11 +20,14 @@ const reducer = (state, action) => {
         ...state,
         currentUser: action.payload,
       };
-    case "SET_SOCKET":
-      return {
-        ...state,
-        socket: action.payload,
-      };
+    case "START_TIMER":
+      return { ...state, isTimerRunning: true };
+    case "STOP_TIMER":
+      return { ...state, isTimerRunning: false };
+    case "RESET_TIMER":
+      return { ...state, time: 0, isTimerRunning: false };
+    case "TICK":
+      return { ...state, time: state.time + 1 };
     default:
       return state;
   }
@@ -29,19 +38,24 @@ export const AppProvider = ({ children }) => {
     size: null,
     numberOfPlayers: null,
     currentUser: null,
-    socket: null,
+    time: 0,
+    isTimerRunning: false,
   });
 
-  useEffect(() => {
-    const socket = new WebSocket("ws://localhost:8000");
-    dispatch({ type: "SET_SOCKET", payload: socket });
+  const timerRef = useRef(null);
 
-    return () => {
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.close();
-      }
-    };
-  }, []);
+  useEffect(() => {
+    if (state.isTimerRunning) {
+      timerRef.current = setInterval(() => {
+        dispatch({ type: "TICK" });
+      }, 1000);
+    } else {
+      clearInterval(timerRef.current);
+    }
+
+    return () => clearInterval(timerRef.current);
+  }, [state.isTimerRunning]);
+
   const contextValue = {
     state,
     dispatch,

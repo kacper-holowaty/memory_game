@@ -1,45 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useMemory } from "../context/MemoryContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function FinishScreen() {
   const { state, dispatch } = useMemory();
-  const { size, currentUser, socket } = state;
-  const [gameTime, setGameTime] = useState(null);
+  const { size, currentUser, time } = state;
   const navigate = useNavigate();
-  useEffect(() => {
-    const finishGame = async () => {
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        await socket.send("get_current_time");
-
-        if (gameTime && currentUser && size) {
-          await axios.post("http://localhost:8000/scores", {
-            size,
-            currentUser,
-            gameTime,
-          });
-        }
-      }
-    };
-    finishGame();
-  }, [currentUser, size, socket, gameTime]);
+  const scoreSent = useRef(false);
 
   useEffect(() => {
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.event === "current_time") {
-        setGameTime(data.value);
+    const saveScore = async () => {
+      if (currentUser && size && time && !scoreSent.current) {
+        scoreSent.current = true;
+        await axios.post("http://localhost:8000/scores", {
+          size,
+          currentUser,
+          gameTime: time,
+        });
       }
     };
-  }, [socket]);
+    saveScore();
+  }, [currentUser, size, time]);
 
   const resetGame = async () => {
+    dispatch({ type: "RESET_TIMER" });
     dispatch({ type: "SET_SIZE", payload: null });
     dispatch({ type: "SET_CURRENT_USER", payload: null });
-    if (socket) {
-      await socket.send("reset_timer");
-    }
     await axios.delete("http://localhost:8000/logout", {
       withCredentials: true,
     });
@@ -50,10 +37,8 @@ function FinishScreen() {
   };
 
   const playAgain = async () => {
+    dispatch({ type: "RESET_TIMER" });
     dispatch({ type: "SET_SIZE", payload: null });
-    if (socket) {
-      await socket.send("reset_timer");
-    }
     await axios.delete("http://localhost:8000/playagain", {
       withCredentials: true,
     });
@@ -61,13 +46,13 @@ function FinishScreen() {
   };
 
   const displayTime = () => {
-    const minutes = Math.floor(gameTime / 60);
-    const seconds = gameTime % 60;
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
 
     const formattedSeconds = String(seconds).padStart(2, "0");
 
-    if (gameTime < 60) {
-      return `${gameTime} s`;
+    if (time < 60) {
+      return `${time} s`;
     } else {
       return `${minutes}:${formattedSeconds} min`;
     }

@@ -1,23 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { GoClock } from "react-icons/go";
+import { useMemory } from "../context/MemoryContext";
 
 const Timer = () => {
-  const [secondsRemaining, setSecondsRemaining] = useState(0);
-  useEffect(() => {
-    const socket = new WebSocket("ws://localhost:8000");
-
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.event === "timer") {
-        setSecondsRemaining(data.value);
-      }
-    };
-    return () => socket.close();
-  }, []);
+  const {
+    state: { time },
+  } = useMemory();
 
   const displayTime = () => {
-    const minutes = Math.floor(secondsRemaining / 60);
-    const seconds = secondsRemaining % 60;
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
 
     const formattedSeconds = String(seconds).padStart(2, "0");
 

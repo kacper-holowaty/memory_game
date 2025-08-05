@@ -6,8 +6,6 @@ const cors = require("cors");
 require("dotenv").config({ path: "./config.env" });
 const port = process.env.PORT || 8000;
 const dbo = require("./db/conn");
-const setupMQTT = require("./mqtt").setupMQTT;
-const setupWebSocket = require("./mqtt").setupWebSocket;
 
 app.use(
   cors({
@@ -38,6 +36,3 @@ http.listen(port, () => {
   });
   console.log(`Server is running on port: ${port}`);
 });
-
-const mqttClient = setupMQTT();
-setupWebSocket(http, mqttClient);

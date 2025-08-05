@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useMemory } from "../context/MemoryContext";
 
 function Leaderboard() {
-  const { dispatch, state } = useMemory();
-  const { socket } = state;
+  const { dispatch } = useMemory();
   const navigate = useNavigate();
   const [scores, setScores] = useState([]);
   const [playerName, setPlayerName] = useState("");
@@ -50,9 +49,7 @@ function Leaderboard() {
   const resetGame = async () => {
     dispatch({ type: "SET_SIZE", payload: null });
     dispatch({ type: "SET_CURRENT_USER", payload: null });
-    if (socket) {
-      await socket.send("reset_timer");
-    }
+    dispatch({ type: "RESET_TIMER" });
     await axios.delete("http://localhost:8000/logout", {
       withCredentials: true,
     });
@@ -60,9 +57,7 @@ function Leaderboard() {
   };
   const playAgain = async () => {
     dispatch({ type: "SET_SIZE", payload: null });
-    if (socket) {
-      await socket.send("reset_timer");
-    }
+    dispatch({ type: "RESET_TIMER" });
     await axios.delete("http://localhost:8000/playagain", {
       withCredentials: true,
     });
