@@ -88,9 +88,11 @@ function LoginPanel() {
               )}
             </div>
             <div className="form-actions">
-              <button type="submit">Zaloguj się</button>
+              <button type="submit" className="btn-primary">
+                Zaloguj się
+              </button>
               <div className="register-link">
-                Nie masz konta?
+                Nie masz konta?{" "}
                 <button type="button" onClick={() => setLoginForm(false)}>
                   Zarejestruj się
                 </button>

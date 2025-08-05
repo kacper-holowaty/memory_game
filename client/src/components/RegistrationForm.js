@@ -106,7 +106,9 @@ function RegistrationForm({ showLoginForm }) {
           )}
         </div>
         <div className="form-actions">
-          <button type="submit">Zarejestruj się</button>
+          <button type="submit" className="btn-primary">
+            Zarejestruj się
+          </button>
           <button
             type="button"
             className="back-to-login"
