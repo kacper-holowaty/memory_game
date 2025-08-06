@@ -16,9 +16,25 @@ const Timer = () => {
 
     if (minutes > 0) {
       const formattedSeconds = String(seconds).padStart(2, "0");
-      return `${minutes} min ${formattedSeconds}.${formattedCentiseconds} s`;
+      return (
+        <>
+          <span className="time-part">{minutes}</span>
+          <span className="time-unit">min </span>
+          <span className="time-part">{formattedSeconds}</span>
+          <span className="time-separator">.</span>
+          <span className="time-part">{formattedCentiseconds}</span>
+          <span className="time-unit">s</span>
+        </>
+      );
     } else {
-      return `${seconds}.${formattedCentiseconds} s`;
+      return (
+        <>
+          <span className="time-part">{seconds}</span>
+          <span className="time-separator">.</span>
+          <span className="time-part">{formattedCentiseconds}</span>
+          <span className="time-unit">s</span>
+        </>
+      );
     }
   };
 
@@ -27,7 +43,7 @@ const Timer = () => {
       <span className="timer-icon">
         <GoClock />
       </span>
-      <span>{displayTime()}</span>
+      <div className="time-display">{displayTime()}</div>
     </div>
   );
 };

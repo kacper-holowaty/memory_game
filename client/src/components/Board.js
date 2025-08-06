@@ -11,6 +11,7 @@ function Board() {
   const [cards, setCards] = useState([]);
   const [disabled, setDisabled] = useState(false);
   const [firstMoveMade, setFirstMoveMade] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const navigate = useNavigate();
   const fetchDataCalled = useRef(false);
 
@@ -39,6 +40,20 @@ function Board() {
 
     startGame();
   }, [size, navigate]);
+
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+    const handlePopState = () => {
+      setIsPaused(true);
+      window.history.pushState(null, "", window.location.href);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
 
   const handleChoice = async (card) => {
     if (disabled || card.isFlipped) return;
@@ -99,8 +114,58 @@ function Board() {
     }
   }, [cards, dispatch, navigate]);
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      setIsPaused((prev) => !prev);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isPaused) {
+      dispatch({ type: "STOP_TIMER" });
+    } else if (firstMoveMade) {
+      dispatch({ type: "START_TIMER" });
+    }
+  }, [isPaused, firstMoveMade, dispatch]);
+
+  const handleContinue = () => {
+    setIsPaused(false);
+    navigate(1);
+  };
+
+  const handleEndGame = async () => {
+    try {
+      await axios.delete("http://localhost:8000/logout", {
+        withCredentials: true,
+      });
+      dispatch({ type: "SET_CURRENT_USER", payload: null });
+      dispatch({ type: "RESET_TIMER" });
+      navigate("/");
+    } catch (error) {
+      console.error("Błąd podczas wylogowywania:", error);
+    }
+  };
+
   return (
     <div className="board-window">
+      {isPaused && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Pauza⏸️</h2>
+            <div className="modal-buttons">
+              <button onClick={handleContinue}>Kontynuuj</button>
+              <button onClick={handleEndGame}>Zakończ grę</button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="user-container">
         <h3>{currentUser?.login}</h3>
         <Timer />
@@ -112,7 +177,7 @@ function Board() {
             card={card}
             handleChoice={handleChoice}
             flipped={card.isFlipped || card.isMatched}
-            disabled={disabled}
+            disabled={disabled || isPaused}
           />
         ))}
       </div>

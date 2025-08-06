@@ -5,7 +5,7 @@ body {
   font-family: "Roboto", sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #fdf9ff;
+  background-color: #f9f0ff;
 }
 
 .board-window {
@@ -97,20 +97,50 @@ body {
 }
 
 .timer {
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-family: "Press Start 2P", system-ui;
+  background-color: #f0f2f5;
+  color: #333;
+  padding: 5px 10px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 10px;
-  color: #333;
-  white-space: nowrap;
+  box-shadow: inset 2px 2px 5px #babecc, inset -5px -5px 10px #ffffff;
+  border: 1px solid #d1d9e6;
+  margin: 0;
 }
 
 .timer-icon {
+  margin-right: 8px;
+  font-size: 1.2em;
+  color: #6200ea;
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-right: 5px;
+}
+
+.time-display {
+  display: flex;
+  align-items: baseline;
+}
+
+.time-part {
+  font-size: 1.2em;
+  color: #ff4081;
+}
+
+.time-separator {
+  font-size: 1em;
+  margin: 0 1px;
+  color: #333;
+}
+
+.time-unit {
+  font-size: 0.6em;
+  margin-left: 3px;
+  color: #555;
+  text-transform: uppercase;
+  align-self: flex-end;
+  margin-bottom: 2px;
 }
 
 .user-container {
@@ -120,18 +150,20 @@ body {
   width: 100%;
   max-width: 800px;
   margin: 0 auto 20px;
-  padding: 10px 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 15px 25px;
+  background: #f0f2f5;
+  border-radius: 12px;
+  box-shadow: 5px 5px 10px #babecc, -5px -5px 10px #ffffff;
   font-family: "Roboto", sans-serif;
   box-sizing: border-box;
 }
 
 .user-container h3 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: clamp(1.1rem, 2.2vw, 1.4rem);
   color: #333;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* StartScreen.js */
@@ -145,7 +177,8 @@ body {
   font-family: Arial, sans-serif;
   overflow: hidden;
   position: relative;
-  min-height: 100vh;
+  height: 100vh;
+  box-sizing: border-box;
 }
 
 .title {
@@ -596,7 +629,7 @@ body {
   }
 
   .timer {
-    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+    font-size: clamp(1rem, 2vw, 1.2rem);
   }
 
   .grid-container-4,
@@ -640,5 +673,79 @@ body {
   .grid-container-8 .front-card,
   .grid-container-8 .back-card {
     font-size: 29px;
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #f9f0ff;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  color: #333;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #eee;
+  animation: float 3s ease-in-out infinite, fadeIn 0.5s ease-out;
+  width: 90%;
+  max-width: 400px;
+}
+
+.modal h2 {
+  font-family: "Press Start 2P", system-ui;
+  font-size: 28px;
+  color: #6200ea;
+  margin-bottom: 30px;
+}
+
+.modal-buttons button {
+  width: auto;
+  padding: 15px 30px;
+  margin: 10px;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  color: white;
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+}
+
+.modal-buttons button:first-child {
+  background-color: #03dac5;
+}
+
+.modal-buttons button:first-child:hover {
+  background-color: #018786;
+}
+
+.modal-buttons button:last-child {
+  background-color: #ff4081;
+}
+
+.modal-buttons button:last-child:hover {
+  background-color: #c51162;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
