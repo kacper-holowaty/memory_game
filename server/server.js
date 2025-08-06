@@ -3,6 +3,7 @@ const app = express();
 const http = require("http").createServer(app);
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const session = require("express-session");
 require("dotenv").config({ path: "./config.env" });
 const port = process.env.PORT || 8000;
 const dbo = require("./db/conn");
@@ -16,6 +17,14 @@ app.use(
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: process.env.NODE_ENV === "production" },
+  })
+);
 app.use(require("./routes/memory"));
 app.use(require("./routes/user"));
 app.use(require("./routes/scores"));
