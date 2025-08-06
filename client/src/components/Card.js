@@ -9,7 +9,7 @@ function Card({ card, handleChoice, flipped, disabled }) {
   return (
     <div className={`card ${flipped ? "flipped" : ""}`} onClick={handleClick}>
       <div className="card-inner">
-        <div className="front-card">{card.emoji}</div>
+        <div className="front-card">{card.isFlipped || card.isMatched ? card.emoji : ""}</div>
         <div className="back-card">?</div>
       </div>
     </div>

@@ -5,24 +5,15 @@ import { useMemory } from "../context/MemoryContext";
 import Timer from "./Timer";
 import { useNavigate } from "react-router-dom";
 
-const shuffleArray = (array) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-};
-
 function Board() {
   const { state, dispatch } = useMemory();
   const { size, currentUser } = state;
-  const [array, setArray] = useState([]);
-  const [choiceOne, setChoiceOne] = useState(null);
-  const [choiceTwo, setChoiceTwo] = useState(null);
+  const [cards, setCards] = useState([]);
   const [disabled, setDisabled] = useState(false);
   const [firstMoveMade, setFirstMoveMade] = useState(false);
   const navigate = useNavigate();
   const fetchDataCalled = useRef(false);
+
 
   useEffect(() => {
     if (!size) {
@@ -33,70 +24,80 @@ function Board() {
       return;
     }
     fetchDataCalled.current = true;
-
-    const fetchData = async () => {
+    const startGame = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8000/board",
+          "http://localhost:8000/board/start",
           { size },
           { withCredentials: true }
         );
-        const unshuffledBoard = response.data.board;
-        setArray(shuffleArray(unshuffledBoard));
+        setCards(response.data.board);
       } catch (error) {
-        console.error("Nie udało się pobrać danych:", error);
+        console.error("Nie udało się rozpocząć gry:", error);
       }
     };
 
-    fetchData();
+    startGame();
   }, [size, navigate]);
 
-  const handleChoice = (card) => {
+  const handleChoice = async (card) => {
+    if (disabled || card.isFlipped) return;
+
     if (!firstMoveMade) {
       setFirstMoveMade(true);
       dispatch({ type: "START_TIMER" });
     }
-    if (choiceOne) {
-      if (choiceOne !== card) {
-        setChoiceTwo(card);
-      }
-    } else {
-      setChoiceOne(card);
-    }
-  };
 
-  const resetChoices = () => {
-    setChoiceOne(null);
-    setChoiceTwo(null);
-    setDisabled(false);
-  };
+    setDisabled(true);
 
-  useEffect(() => {
-    if (choiceOne && choiceTwo) {
-      setDisabled(true);
-      if (choiceOne.emoji === choiceTwo.emoji) {
-        setArray((prevArray) =>
-          prevArray.map((card) =>
-            card.emoji === choiceOne.emoji
-              ? { ...card, matched: true }
-              : card
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/board/reveal",
+        { cardId: card.id },
+        { withCredentials: true }
+      );
+
+      const { card: revealedCard, match, card1, card2 } = response.data;
+
+      setCards((prevCards) =>
+        prevCards.map((c) =>
+          c.id === revealedCard.id ? { ...c, ...revealedCard } : c
+        )
+      );
+
+      if (match === true) {
+        setCards((prevCards) =>
+          prevCards.map((c) =>
+            c.id === card1 || c.id === card2 ? { ...c, isMatched: true } : c
           )
         );
-        resetChoices();
+        setDisabled(false);
+      } else if (match === false) {
+        setTimeout(() => {
+          setCards((prevCards) =>
+            prevCards.map((c) =>
+              c.id === card1 || c.id === card2 ? { ...c, isFlipped: false } : c
+            )
+          );
+          setDisabled(false);
+        }, 1000);
       } else {
-        setTimeout(() => resetChoices(), 1000);
+        setDisabled(false);
       }
+    } catch (error) {
+      console.error("Błąd podczas odkrywania karty:", error);
+      setDisabled(false);
     }
-  }, [choiceOne, choiceTwo]);
+  };
 
   useEffect(() => {
-    if (array.length > 0 && array.every((card) => card.matched)) {
+    if (cards.length > 0 && cards.every((card) => card.isMatched)) {
       dispatch({ type: "STOP_TIMER" });
       setTimeout(() => {
         navigate("/game/finish");
-      }, 3000);
+      }, 1000);
     }
-  }, [array, dispatch, navigate]);
+  }, [cards, dispatch, navigate]);
 
   return (
     <div className="board-window">
@@ -105,12 +106,12 @@ function Board() {
         <Timer />
       </div>
       <div className={`grid-container-${size}`}>
-        {array.map((card, index) => (
+        {cards.map((card) => (
           <Card
-            key={index}
+            key={card.id}
             card={card}
             handleChoice={handleChoice}
-            flipped={card === choiceOne || card === choiceTwo || card.matched}
+            flipped={card.isFlipped || card.isMatched}
             disabled={disabled}
           />
         ))}
