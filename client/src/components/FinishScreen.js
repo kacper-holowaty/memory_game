@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useMemory } from "../context/MemoryContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -8,12 +8,13 @@ function FinishScreen() {
   const { size, currentUser, time } = state;
   const navigate = useNavigate();
   const scoreSent = useRef(false);
+  const [newScoreId, setNewScoreId] = useState(null);
 
   useEffect(() => {
     const saveScore = async () => {
       if (currentUser && size && time && !scoreSent.current) {
         scoreSent.current = true;
-        await axios.post(
+        const response = await axios.post(
           "http://localhost:8000/scores",
           {
             size,
@@ -22,6 +23,9 @@ function FinishScreen() {
           },
           { withCredentials: true }
         );
+        if (response.data.success) {
+          setNewScoreId(response.data.scoreId);
+        }
       }
     };
     saveScore();
@@ -37,7 +41,7 @@ function FinishScreen() {
     navigate("/");
   };
   const handleScores = () => {
-    navigate("/leaderboard");
+    navigate("/leaderboard", { state: { newScoreId: newScoreId } });
   };
 
   const playAgain = () => {
@@ -63,14 +67,20 @@ function FinishScreen() {
 
   return (
     <div className="finish-screen-container">
-      <h2>Gratulacje {currentUser?.login} udało ci się ukończyć grę!</h2>
-      <h2>Twój czas: {displayTime()}</h2>
-      <div className="finish-screen-buttons">
-        <button onClick={resetGame}>Zakończ grę</button>
-        <button onClick={playAgain}>Zagraj ponownie</button>
-        <button className="leaderboard-button" onClick={handleScores}>
-          Najlepsze wyniki
-        </button>
+      <div className="finish-screen-content">
+        <h2>Gratulacje, {currentUser?.login}!</h2>
+        <p className="time-info">Ukończyłeś/aś grę w czasie: {displayTime()}</p>
+        <div className="finish-screen-buttons">
+          <button className="btn-primary" onClick={playAgain}>
+            Zagraj ponownie
+          </button>
+          <button className="btn-secondary" onClick={handleScores}>
+            Najlepsze wyniki
+          </button>
+          <button className="btn-tertiary" onClick={resetGame}>
+            Zakończ grę
+          </button>
+        </div>
       </div>
     </div>
   );

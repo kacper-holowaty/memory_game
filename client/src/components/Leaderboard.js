@@ -1,14 +1,41 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useMemory } from "../context/MemoryContext";
 
 function Leaderboard() {
   const { dispatch } = useMemory();
   const navigate = useNavigate();
+  const location = useLocation();
   const [scores, setScores] = useState([]);
   const [playerName, setPlayerName] = useState("");
   const [difficulty, setDifficulty] = useState("");
+  const [pagination, setPagination] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [newScoreId, setNewScoreId] = useState(location.state?.newScoreId || null);
+
+  useEffect(() => {
+    const fetchAndHighlight = async () => {
+      if (newScoreId) {
+        try {
+          const rankResponse = await axios.get(
+            `http://localhost:8000/scores/${newScoreId}/rank`,
+            { withCredentials: true }
+          );
+          const { rank } = rankResponse.data;
+          const newPage = Math.ceil(rank / limit);
+          setCurrentPage(newPage);
+          navigate(location.pathname, { replace: true, state: {} });
+        } catch (error) {
+          console.error("Błąd podczas pobierania pozycji wyniku:", error);
+          setNewScoreId(null);
+        }
+      }
+    };
+
+    fetchAndHighlight();
+  }, [newScoreId, limit, navigate, location.pathname]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,18 +44,20 @@ function Leaderboard() {
           params: {
             player: playerName,
             difficulty: difficulty,
+            page: currentPage,
+            limit: limit,
           },
           withCredentials: true,
         });
 
         setScores(response.data.scores);
+        setPagination(response.data.pagination);
       } catch (error) {
         console.error("Błąd podczas pobierania wyników:", error);
       }
     };
-
     fetchData();
-  }, [playerName, difficulty]);
+  }, [playerName, difficulty, currentPage, limit]);
 
   const handleInputChange = (e) => {
     setPlayerName(e.target.value);
@@ -36,6 +65,18 @@ function Leaderboard() {
 
   const handleSelectChange = (e) => {
     setDifficulty(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleLimitChange = (e) => {
+    setLimit(Number(e.target.value));
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage > 0 && newPage <= pagination.totalPages) {
+      setCurrentPage(newPage);
+    }
   };
 
   const displayTime = (time) => {
@@ -71,40 +112,99 @@ function Leaderboard() {
 
   return (
     <div className="leaderboard-container">
-      <div className="leaderboard-header">Tablica wyników</div>
-      <div className="leaderboard-buttons">
-        <button className="left-button-finish" onClick={resetGame}>
-          Zakończ grę
-        </button>
-        <button className="right-button-play-again" onClick={playAgain}>
-          Zagraj ponownie
-        </button>
-      </div>
-      <div className="leaderboard-form">
-        <label>
-          Nazwa gracza:
-          <input type="text" value={playerName} onChange={handleInputChange} />
-        </label>
-        <label>
-          Poziom trudności:
-          <select value={difficulty} onChange={handleSelectChange}>
-            <option value="">-- Wybierz --</option>
-            <option value="ŁATWY">ŁATWY</option>
-            <option value="ŚREDNI">ŚREDNI</option>
-            <option value="TRUDNY">TRUDNY</option>
-          </select>
-        </label>
-      </div>
-      <div className="leaderboard-scores">
-        <ol>
+      <div className="leaderboard-content">
+        <h1 className="leaderboard-header">Tablica wyników</h1>
+        <div className="leaderboard-buttons">
+          <button className="btn-primary" onClick={playAgain}>
+            Zagraj ponownie
+          </button>
+          <button className="btn-secondary" onClick={resetGame}>
+            Zakończ i wyloguj
+          </button>
+        </div>
+        <div className="leaderboard-form">
+          <div className="form-group">
+            <label htmlFor="playerName">Filtruj po nazwie gracza:</label>
+            <input
+              id="playerName"
+              type="text"
+              value={playerName}
+              onChange={handleInputChange}
+              placeholder="Wpisz nazwę gracza..."
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="difficulty">Filtruj po poziomie trudności:</label>
+            <select
+              id="difficulty"
+              value={difficulty}
+              onChange={handleSelectChange}
+            >
+              <option value="">Wszystkie</option>
+              <option value="ŁATWY">Łatwy</option>
+              <option value="ŚREDNI">Średni</option>
+              <option value="TRUDNY">Trudny</option>
+            </select>
+          </div>
+        </div>
+        <ul className="leaderboard-scores">
           {scores.map((score, index) => (
-            <li key={index}>
-              {`Nazwa gracza: ${score.player}, Czas: ${displayTime(
-                score.gameTime
-              )}, Poziom trudności: ${score.difficulty}`}
+            <li
+              key={score._id}
+              className={score._id === newScoreId ? "highlighted" : ""}
+            >
+              <span className="rank">{score.rank}.</span>
+              <div className="score-info">
+                <span className="player-name">{score.player}</span>
+                <span className="difficulty">
+                  Poziom: {score.difficulty}
+                </span>
+              </div>
+              <span className="game-time">{displayTime(score.gameTime)}</span>
             </li>
           ))}
-        </ol>
+        </ul>
+        {pagination && pagination.totalPages > 0 && (
+          <div className="pagination-controls">
+            <div className="limit-selector">
+              <label htmlFor="limit">Wyników na stronę:</label>
+              <select id="limit" value={limit} onChange={handleLimitChange}>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+              </select>
+            </div>
+            <div className="page-nav">
+              <button
+                onClick={() => handlePageChange(1)}
+                disabled={currentPage === 1}
+              >
+                «
+              </button>
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                ‹
+              </button>
+              <span>
+                Strona {pagination.currentPage} z {pagination.totalPages}
+              </span>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === pagination.totalPages}
+              >
+                ›
+              </button>
+              <button
+                onClick={() => handlePageChange(pagination.totalPages)}
+                disabled={currentPage === pagination.totalPages}
+              >
+                »
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
