@@ -56,7 +56,13 @@ function Board() {
       setFirstMoveMade(true);
       dispatch({ type: "START_TIMER" });
     }
-    choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
+    if (choiceOne) {
+      if (choiceOne !== card) {
+        setChoiceTwo(card);
+      }
+    } else {
+      setChoiceOne(card);
+    }
   };
 
   const resetChoices = () => {
