@@ -109,13 +109,20 @@ function RegistrationForm({ showLoginForm }) {
           <button type="submit" className="btn-primary">
             Zarejestruj się
           </button>
-          <button
-            type="button"
-            className="back-to-login"
-            onClick={() => showLoginForm()}
-          >
-            Powrót do logowania
-          </button>
+          <div className="form-links">
+            <div className="menu-link">
+              <button type="button" onClick={() => navigate("/")}>
+                Ekran startowy
+              </button>
+            </div>
+            <button
+              type="button"
+              className="back-to-login"
+              onClick={() => showLoginForm()}
+            >
+              Powrót do logowania
+            </button>
+          </div>
         </div>
         {registrationError && <div className="error">{registrationError}</div>}
       </form>

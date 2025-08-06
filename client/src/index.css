@@ -329,10 +329,57 @@ body {
   background-color: #3700b3;
 }
 
-.login-form .register-link {
+.login-form .btn-secondary,
+.registration-form .btn-secondary {
+  width: auto;
+  padding: 15px 40px;
+  background-color: #03dac5;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.login-form .btn-secondary:hover,
+.registration-form .btn-secondary:hover {
+  background-color: #018786;
+}
+
+.login-form .form-links,
+.registration-form .form-links {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
   margin-top: 20px;
-  text-align: center;
-  line-height: 1.5;
+  align-items: center;
+}
+
+.login-form .menu-link button,
+.registration-form .back-to-login,
+.registration-form .menu-link button {
+  background-color: transparent;
+  border: none;
+  color: #6200ea;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 14px;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+}
+
+.login-form .register-link {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.login-form .register-link span {
+  color: black;
+  font-size: 14px;
+  margin-bottom: 2px;
 }
 
 .login-form .register-link button {
@@ -343,6 +390,7 @@ body {
   text-decoration: underline;
   font-size: 14px;
   padding: 0;
+  font-family: "Roboto", sans-serif;
 }
 
 /* RegistrationForm.css */
@@ -369,7 +417,6 @@ body {
   color: #6200ea;
   cursor: pointer;
   text-decoration: underline;
-  margin-top: 15px;
   font-size: 14px;
   padding: 0;
 }

@@ -91,11 +91,18 @@ function LoginPanel() {
               <button type="submit" className="btn-primary">
                 Zaloguj się
               </button>
-              <div className="register-link">
-                Nie masz konta?{" "}
-                <button type="button" onClick={() => setLoginForm(false)}>
-                  Zarejestruj się
-                </button>
+              <div className="form-links">
+                <div className="menu-link">
+                  <button type="button" onClick={() => navigate("/")}>
+                    Ekran startowy
+                  </button>
+                </div>
+                <div className="register-link">
+                  <span>Nie masz konta?</span>
+                  <button type="button" onClick={() => setLoginForm(false)}>
+                    Zarejestruj się
+                  </button>
+                </div>
               </div>
             </div>
             {loginError && <div className="error">{loginError}</div>}
