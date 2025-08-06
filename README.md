@@ -4,19 +4,13 @@
 
 ## Co jest potrzebne do uruchomienia aplikacji?
 
-###### Broker MQTT
-
-Aplikacja używa między innymi Timera, którego działanie jest możliwe dzięki brokerowi MQTT.
-
-Jako brokera używałem HiveMQ dostępnego pod adresem: [https://github.com/hivemq/hivemq-community-edition](https://github.com/hivemq/hivemq-community-edition).
-
 ###### Baza danych MongoDB
 
-Aplikacja korzysta z bazy danych, aby przechowywać informację o kontach graczy (nazwy użytkowników i hasła) oraz aby przechowywać historię gier i na jej podstawie możliwe jest wyświetlenie najlepszych wyników uzyskanych przez graczy.
+Aplikacja korzysta z bazy danych, aby przechowywać informację o kontach graczy (nazwy użytkowników i hasła) oraz aby przechowywać historię gier, na której podstawie możliwe jest wyświetlenie najlepszych wyników uzyskanych przez graczy.
 
 Do uruchomienia bazy danych można wykorzystać np. [Dockera](https://www.docker.com), uruchamiając w nim odpowiedni kontener.
 
-Przykładowe polecenie, za pomocą którego można uruchomić bazę mongo w kontenerze:
+Przykładowe polecenie, za pomocą którego można uruchomić bazę danych MongoDB w kontenerze:
 
 ````docker run -d \
     -p 27017:27017 \
