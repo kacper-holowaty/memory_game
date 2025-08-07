@@ -13,9 +13,11 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://memory-emoji.netlify.app"
+      "https://memory-emoji.netlify.app",
     ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
