@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMemory } from "../context/MemoryContext";
+import config from '../config';
 
 function Leaderboard() {
   const { dispatch } = useMemory();
@@ -20,7 +21,7 @@ function Leaderboard() {
       if (newScoreId) {
         try {
           const rankResponse = await axios.get(
-            `http://localhost:8000/scores/${newScoreId}/rank`,
+            `${config.API_URL}/scores/${newScoreId}/rank`,
             { withCredentials: true }
           );
           const { rank } = rankResponse.data;
@@ -40,7 +41,7 @@ function Leaderboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/scores", {
+        const response = await axios.get(`${config.API_URL}/scores`, {
           params: {
             player: playerName,
             difficulty: difficulty,
@@ -98,7 +99,7 @@ function Leaderboard() {
     dispatch({ type: "SET_SIZE", payload: null });
     dispatch({ type: "SET_CURRENT_USER", payload: null });
     dispatch({ type: "RESET_TIMER" });
-    await axios.delete("http://localhost:8000/logout", {
+    await axios.delete(`${config.API_URL}/logout`, {
       withCredentials: true,
     });
     navigate("/");

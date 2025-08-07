@@ -5,6 +5,7 @@ import RegistrationForm from "./RegistrationForm";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useMemory } from "../context/MemoryContext";
+import config from '../config';
 
 function LoginPanel() {
   const [loginForm, setLoginForm] = useState(true);
@@ -27,7 +28,7 @@ function LoginPanel() {
     onSubmit: async (values) => {
       try {
         const response = await axios.post(
-          "http://localhost:8000/login",
+          `${config.API_URL}/login`,
           values,
           {
             withCredentials: true,

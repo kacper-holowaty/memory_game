@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useMemory } from "../context/MemoryContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import config from '../config';
 
 function FinishScreen() {
   const { state, dispatch } = useMemory();
@@ -15,7 +16,7 @@ function FinishScreen() {
       if (currentUser && size && time && !scoreSent.current) {
         scoreSent.current = true;
         const response = await axios.post(
-          "http://localhost:8000/scores",
+          `${config.API_URL}/scores`,
           {
             size,
             currentUser: currentUser.login,
@@ -35,7 +36,7 @@ function FinishScreen() {
     dispatch({ type: "RESET_TIMER" });
     dispatch({ type: "SET_SIZE", payload: null });
     dispatch({ type: "SET_CURRENT_USER", payload: null });
-    await axios.delete("http://localhost:8000/logout", {
+    await axios.delete(`${config.API_URL}/logout`, {
       withCredentials: true,
     });
     navigate("/");

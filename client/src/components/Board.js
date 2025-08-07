@@ -4,6 +4,7 @@ import Card from "./Card";
 import { useMemory } from "../context/MemoryContext";
 import Timer from "./Timer";
 import { useNavigate } from "react-router-dom";
+import config from '../config';
 
 function Board() {
   const { state, dispatch } = useMemory();
@@ -21,14 +22,14 @@ function Board() {
       navigate("/");
       return;
     }
-    if (fetchDataCalled.current) {
-      return;
-    }
-    fetchDataCalled.current = true;
+    // if (fetchDataCalled.current) {
+    //   return;
+    // }
+    // fetchDataCalled.current = true;
     const startGame = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8000/board/start",
+          `${config.API_URL}/board/start`,
           { size },
           { withCredentials: true }
         );
@@ -67,7 +68,7 @@ function Board() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/board/reveal",
+        `${config.API_URL}/board/reveal`,
         { cardId: card.id },
         { withCredentials: true }
       );
@@ -142,7 +143,7 @@ function Board() {
 
   const handleEndGame = async () => {
     try {
-      await axios.delete("http://localhost:8000/logout", {
+      await axios.delete(`${config.API_URL}/logout`, {
         withCredentials: true,
       });
       dispatch({ type: "SET_CURRENT_USER", payload: null });

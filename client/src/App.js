@@ -7,6 +7,7 @@ import Board from "./components/Board";
 import LoginPanel from "./components/LoginPanel";
 import FinishScreen from "./components/FinishScreen";
 import Leaderboard from "./components/Leaderboard";
+import config from './config';
 
 function App() {
   const { dispatch } = useMemory();
@@ -14,7 +15,7 @@ function App() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/me", {
+        const response = await axios.get(`${config.API_URL}/me`, {
           withCredentials: true,
         });
         if (response.data.success) {

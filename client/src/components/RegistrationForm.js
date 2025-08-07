@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useMemory } from "../context/MemoryContext";
+import config from '../config';
 
 function RegistrationForm({ showLoginForm }) {
   const [registrationError, setRegistrationError] = useState("");
@@ -36,7 +37,7 @@ function RegistrationForm({ showLoginForm }) {
     onSubmit: async (values, { setSubmitting }) => {
       try {
         const response = await axios.post(
-          "http://localhost:8000/register",
+          `${config.API_URL}/register`,
           { login: values.login, password: values.password },
           { withCredentials: true }
         );
