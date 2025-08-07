@@ -4,8 +4,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Yup = require("yup");
 const dbo = require("../db/conn");
-const ObjectId = require("mongodb").ObjectId;
-const verifyToken = require("../middleware/auth");
 
 userRoutes.route("/register").post(async (req, res) => {
   const { login, password } = req.body;
@@ -51,12 +49,6 @@ userRoutes.route("/register").post(async (req, res) => {
         expiresIn: "1h",
       });
 
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-      });
-
       res.status(201).json({
         success: true,
         message: "Użytkownik został pomyślnie zarejestrowany i zalogowany.",
@@ -64,6 +56,7 @@ userRoutes.route("/register").post(async (req, res) => {
           id: newUser._id,
           login: newUser.login,
         },
+        token,
       });
     } else {
       res.status(500).json({
@@ -103,12 +96,6 @@ userRoutes.route("/login").post(async (req, res) => {
         expiresIn: "1h",
       });
 
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-      });
-
       res.status(200).json({
         success: true,
         message: "Zalogowano pomyślnie.",
@@ -116,6 +103,7 @@ userRoutes.route("/login").post(async (req, res) => {
           id: user._id,
           login: user.login,
         },
+        token,
       });
     } else {
       res.status(401).json({
@@ -132,39 +120,9 @@ userRoutes.route("/login").post(async (req, res) => {
   }
 });
 
-userRoutes.route("/me").get(verifyToken, async (req, res) => {
-  try {
-    const db = dbo.getDb();
-    const user = await db
-      .collection("users")
-      .findOne({ _id: new ObjectId(req.user.id) });
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "Użytkownik nie znaleziony.",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      user: {
-        id: user._id,
-        login: user.login,
-      },
-    });
-  } catch (error) {
-    console.error("Błąd podczas pobierania danych użytkownika:", error);
-    res.status(500).json({
-      success: false,
-      message: "Wystąpił błąd podczas pobierania danych użytkownika.",
-    });
-  }
-});
 
 userRoutes.route("/logout").delete(async (req, res) => {
   try {
-    res.clearCookie("token");
     res.status(200).json({
       success: true,
       message: "Wylogowano pomyślnie.",
