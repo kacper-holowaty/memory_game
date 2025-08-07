@@ -8,10 +8,12 @@ require('dotenv').config();
 const port = process.env.PORT || 8000;
 const dbo = require("./db/conn");
 
+app.set("trust proxy", 1);
 app.use(
   cors({
     origin: [
       "http://localhost:3000",
+      "https://memory-emoji.netlify.app"
     ],
     credentials: true,
   })
