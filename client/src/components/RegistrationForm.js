@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
+import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import { useMemory } from "../context/MemoryContext";
-import config from '../config';
 
 function RegistrationForm({ showLoginForm }) {
   const [registrationError, setRegistrationError] = useState("");
@@ -36,14 +35,16 @@ function RegistrationForm({ showLoginForm }) {
     }),
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        const response = await axios.post(
-          `${config.API_URL}/register`,
-          { login: values.login, password: values.password },
-          { withCredentials: true }
-        );
+        const response = await api.post("/register", {
+          login: values.login,
+          password: values.password,
+        });
 
         if (response.data.success) {
-          dispatch({ type: "SET_CURRENT_USER", payload: response.data.user });
+          dispatch({
+            type: "SET_CURRENT_USER",
+            payload: { user: response.data.user, token: response.data.token },
+          });
           setTimeout(() => {
             navigate("/game");
           }, 500);

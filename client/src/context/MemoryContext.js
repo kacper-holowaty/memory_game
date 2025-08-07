@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useRef,
 } from "react";
+import { setupInterceptors } from "../api/axios";
 
 const MemoryContext = createContext();
 
@@ -18,7 +19,8 @@ const reducer = (state, action) => {
     case "SET_CURRENT_USER":
       return {
         ...state,
-        currentUser: action.payload,
+        currentUser: action.payload.user,
+        token: action.payload.token,
       };
     case "START_TIMER":
       return { ...state, isTimerRunning: true };
@@ -38,11 +40,16 @@ export const AppProvider = ({ children }) => {
     size: null,
     numberOfPlayers: null,
     currentUser: null,
+    token: null,
     time: 0,
     isTimerRunning: false,
   });
 
   const timerRef = useRef(null);
+
+  useEffect(() => {
+    setupInterceptors(() => state);
+  }, [state]);
 
   useEffect(() => {
     if (state.isTimerRunning) {

@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import RegistrationForm from "./RegistrationForm";
-import axios from "axios";
+import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import { useMemory } from "../context/MemoryContext";
-import config from '../config';
 
 function LoginPanel() {
   const [loginForm, setLoginForm] = useState(true);
@@ -27,16 +26,13 @@ function LoginPanel() {
     }),
     onSubmit: async (values) => {
       try {
-        const response = await axios.post(
-          `${config.API_URL}/login`,
-          values,
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await api.post("/login", values);
         if (response.data.success) {
           setLoginError("");
-          dispatch({ type: "SET_CURRENT_USER", payload: response.data.user });
+          dispatch({
+            type: "SET_CURRENT_USER",
+            payload: { user: response.data.user, token: response.data.token },
+          });
           setTimeout(() => {
             navigate("/game");
           }, 500);

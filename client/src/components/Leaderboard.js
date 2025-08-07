@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMemory } from "../context/MemoryContext";
-import config from '../config';
 
 function Leaderboard() {
   const { dispatch } = useMemory();
@@ -20,10 +19,7 @@ function Leaderboard() {
     const fetchAndHighlight = async () => {
       if (newScoreId) {
         try {
-          const rankResponse = await axios.get(
-            `${config.API_URL}/scores/${newScoreId}/rank`,
-            { withCredentials: true }
-          );
+          const rankResponse = await api.get(`/scores/${newScoreId}/rank`);
           const { rank } = rankResponse.data;
           const newPage = Math.ceil(rank / limit);
           setCurrentPage(newPage);
@@ -41,14 +37,13 @@ function Leaderboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${config.API_URL}/scores`, {
+        const response = await api.get("/scores", {
           params: {
             player: playerName,
             difficulty: difficulty,
             page: currentPage,
             limit: limit,
           },
-          withCredentials: true,
         });
 
         setScores(response.data.scores);
@@ -97,11 +92,12 @@ function Leaderboard() {
 
   const resetGame = async () => {
     dispatch({ type: "SET_SIZE", payload: null });
-    dispatch({ type: "SET_CURRENT_USER", payload: null });
-    dispatch({ type: "RESET_TIMER" });
-    await axios.delete(`${config.API_URL}/logout`, {
-      withCredentials: true,
+    dispatch({
+      type: "SET_CURRENT_USER",
+      payload: { user: null, token: null },
     });
+    dispatch({ type: "RESET_TIMER" });
+    await api.delete("/logout");
     navigate("/");
   };
   

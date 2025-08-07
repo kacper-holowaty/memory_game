@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import api from "../api/axios";
 import Card from "./Card";
 import { useMemory } from "../context/MemoryContext";
 import Timer from "./Timer";
 import { useNavigate } from "react-router-dom";
-import config from '../config';
 
 function Board() {
   const { state, dispatch } = useMemory();
@@ -14,25 +13,15 @@ function Board() {
   const [firstMoveMade, setFirstMoveMade] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const navigate = useNavigate();
-  const fetchDataCalled = useRef(false);
-
 
   useEffect(() => {
     if (!size) {
       navigate("/");
       return;
     }
-    // if (fetchDataCalled.current) {
-    //   return;
-    // }
-    // fetchDataCalled.current = true;
     const startGame = async () => {
       try {
-        const response = await axios.post(
-          `${config.API_URL}/board/start`,
-          { size },
-          { withCredentials: true }
-        );
+        const response = await api.post("/board/start", { size });
         setCards(response.data.board);
       } catch (error) {
         console.error("Nie udało się rozpocząć gry:", error);
@@ -67,11 +56,9 @@ function Board() {
     setDisabled(true);
 
     try {
-      const response = await axios.post(
-        `${config.API_URL}/board/reveal`,
-        { cardId: card.id },
-        { withCredentials: true }
-      );
+      const response = await api.post("/board/reveal", {
+        cardId: card.id,
+      });
 
       const { card: revealedCard, match, card1, card2 } = response.data;
 
@@ -143,10 +130,11 @@ function Board() {
 
   const handleEndGame = async () => {
     try {
-      await axios.delete(`${config.API_URL}/logout`, {
-        withCredentials: true,
+      await api.delete("/logout");
+      dispatch({
+        type: "SET_CURRENT_USER",
+        payload: { user: null, token: null },
       });
-      dispatch({ type: "SET_CURRENT_USER", payload: null });
       dispatch({ type: "RESET_TIMER" });
       navigate("/");
     } catch (error) {

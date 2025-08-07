@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useMemory } from "../context/MemoryContext";
-import axios from "axios";
+import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
-import config from '../config';
 
 function FinishScreen() {
   const { state, dispatch } = useMemory();
@@ -15,15 +14,11 @@ function FinishScreen() {
     const saveScore = async () => {
       if (currentUser && size && time && !scoreSent.current) {
         scoreSent.current = true;
-        const response = await axios.post(
-          `${config.API_URL}/scores`,
-          {
-            size,
-            currentUser: currentUser.login,
-            gameTime: time,
-          },
-          { withCredentials: true }
-        );
+        const response = await api.post("/scores", {
+          size,
+          currentUser: currentUser.login,
+          gameTime: time,
+        });
         if (response.data.success) {
           setNewScoreId(response.data.scoreId);
         }
@@ -35,10 +30,11 @@ function FinishScreen() {
   const resetGame = async () => {
     dispatch({ type: "RESET_TIMER" });
     dispatch({ type: "SET_SIZE", payload: null });
-    dispatch({ type: "SET_CURRENT_USER", payload: null });
-    await axios.delete(`${config.API_URL}/logout`, {
-      withCredentials: true,
+    dispatch({
+      type: "SET_CURRENT_USER",
+      payload: { user: null, token: null },
     });
+    await api.delete("/logout");
     navigate("/");
   };
   const handleScores = () => {
