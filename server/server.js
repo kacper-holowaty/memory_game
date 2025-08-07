@@ -4,13 +4,15 @@ const http = require("http").createServer(app);
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const session = require("express-session");
-require("dotenv").config({ path: "./config.env" });
+require('dotenv').config();
 const port = process.env.PORT || 8000;
 const dbo = require("./db/conn");
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+    ],
     credentials: true,
   })
 );
@@ -25,19 +27,12 @@ app.use(
     cookie: { secure: process.env.NODE_ENV === "production" },
   })
 );
+app.get("/", (req, res) => {
+  res.json({ message: "Memory Game API is running!" });
+});
 app.use(require("./routes/memory"));
 app.use(require("./routes/user"));
 app.use(require("./routes/scores"));
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header("Access-Control-Allow-Credentials", true);
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
 
 http.listen(port, () => {
   dbo.connectToServer(function (err) {
